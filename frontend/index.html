@@ -1,583 +1,1316 @@
 <!DOCTYPE html>
-<html class="light" lang="es">
+<html lang="es">
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>ACFC Kitchen — Gastronomic SaaS</title>
-  <meta name="description" content="ACFC Kitchen — Gestión gastronómica premium con planificador de menús, control de inventario y desarrollo de recetas con IA."/>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <title>ACFC Kitchen — Gestión Gastronómica</title>
+  <meta name="description" content="ACFC Kitchen — Plataforma premium de gestión gastronómica: inventario, recetas, escandallos y planificación de menús."/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <script id="tailwind-config">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <script>
     tailwind.config = {
-      darkMode: "class",
       theme: {
         extend: {
           colors: {
-            "primary": "#4f46e5", // Indigo corporativo
-            "on-primary": "#ffffff",
-            "primary-container": "#f0f2ff",
-            "on-primary-container": "#312e81",
-            "secondary": "#059669", // Emerald
-            "on-secondary": "#ffffff",
-            "secondary-container": "#ecfdf5",
-            "on-secondary-container": "#047857",
-            "tertiary": "#db2777",
-            "error": "#ef4444",
-            "background": "#f1f5f9", // Gris claro
-            "on-background": "#0f172a",
-            "surface": "#ffffff",
-            "surface-dim": "#f8fafc",
-            "on-surface": "#0f172a",
-            "on-surface-variant": "#475569",
-            "outline": "#e2e8f0"
+            brand: { DEFAULT: '#4f46e5', light: '#818cf8', dark: '#3730a3', muted: '#eef2ff' },
+            success: { DEFAULT: '#059669', light: '#d1fae5', dark: '#047857' },
+            danger:  { DEFAULT: '#dc2626', light: '#fee2e2', dark: '#b91c1c' },
+            warn:    { DEFAULT: '#d97706', light: '#fef3c7', dark: '#b45309' },
+            info:    { DEFAULT: '#0891b2', light: '#e0f2fe', dark: '#0e7490' },
+            surface: '#ffffff',
+            bg:      '#f1f5f9',
           },
-          fontFamily: {
-            "display": ["Outfit", "sans-serif"],
-            "headline": ["Outfit", "sans-serif"],
-            "body": ["Inter", "sans-serif"]
+          fontFamily: { display: ['Outfit','sans-serif'], body: ['Inter','sans-serif'] },
+          boxShadow: {
+            'card': '0 1px 3px rgba(15,23,42,.05), 0 4px 16px -4px rgba(15,23,42,.07)',
+            'card-hover': '0 4px 24px -4px rgba(15,23,42,.12)',
+            'glow-brand': '0 0 20px rgba(79,70,229,.25)',
           }
         }
       }
     }
   </script>
   <style>
-    body { background-color: #f1f5f9; color: #0f172a; font-family: 'Inter', sans-serif; }
-    .premium-card {
-      background-color: #ffffff;
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      box-shadow: 0 4px 18px -4px rgba(15, 23, 42, 0.04), 0 2px 8px -2px rgba(15, 23, 42, 0.02);
-      border-radius: 1rem;
+    *, *::before, *::after { box-sizing: border-box; }
+    body { background: #f1f5f9; font-family: 'Inter', sans-serif; color: #0f172a; min-height: 100vh; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border: 1px solid rgba(226,232,240,.7);
+      border-radius: 16px;
+      box-shadow: 0 1px 3px rgba(15,23,42,.05), 0 4px 16px -4px rgba(15,23,42,.07);
+      transition: box-shadow .2s, transform .2s;
     }
-    .glass-day {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      transition: all 0.2s ease;
-    }
-    .glass-day:hover {
-      border-color: #cbd5e1;
-      box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.03);
-    }
-    .current-day {
-      border-top: 3px solid #4f46e5 !important;
-      background: #f5f7ff !important;
-    }
+    .card:hover { box-shadow: 0 4px 24px -4px rgba(15,23,42,.12); }
+
+    /* ── Nav link ── */
     .nav-link {
-      @apply text-slate-600 hover:text-indigo-600 hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors font-medium text-sm cursor-pointer flex items-center gap-2;
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 10px;
+      font-size: .875rem; font-weight: 500; color: #475569;
+      cursor: pointer; text-decoration: none; transition: all .15s;
+      white-space: nowrap;
     }
-    .nav-link.active {
-      @apply text-indigo-700 bg-indigo-50/80 font-semibold;
-    }
+    .nav-link:hover  { background: #f8fafc; color: #4f46e5; }
+    .nav-link.active { background: #eef2ff; color: #4f46e5; font-weight: 600; }
+    .nav-link .ms { font-size: 18px; }
+
+    /* ── Screens ── */
     .screen { display: none; }
-    .screen.active { display: flex; }
-    .pulse-coral { animation: pulse-coral 2s infinite; }
-    @keyframes pulse-coral {
-      0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3); }
-      70%  { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    .screen.active { display: flex; flex-direction: column; gap: 24px; animation: fadeUp .3s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+    /* ── Badge ── */
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 99px; font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    .badge-red    { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+    .badge-green  { background: #d1fae5; color: #047857; border: 1px solid #a7f3d0; }
+    .badge-amber  { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+    .badge-indigo { background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe; }
+    .badge-slate  { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+    /* ── Progress bar ── */
+    .prog-track { height: 6px; background: #f1f5f9; border-radius: 99px; overflow: hidden; }
+    .prog-fill  { height: 100%; border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+
+    /* ── Pulse dot ── */
+    .pulse-red { animation: pulseRed 1.8s infinite; }
+    @keyframes pulseRed {
+      0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,.4); }
+      50%      { box-shadow: 0 0 0 6px rgba(220,38,38,.0); }
     }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* ── Toast ── */
+    #toast-root { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+    .toast {
+      background: #0f172a; color: #f8fafc; border-radius: 12px; padding: 12px 18px;
+      font-size: .875rem; display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.25); pointer-events: all;
+      animation: toastIn .3s ease both;
+    }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+    /* ── Modal overlay ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,.45); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-box { background: #fff; border-radius: 20px; padding: 28px; width: 100%; max-width: 480px; box-shadow: 0 24px 60px rgba(15,23,42,.2); transform: translateY(20px) scale(.97); transition: transform .25s; }
+    .modal-overlay.open .modal-box { transform: none; }
+
+    /* ── Recipe card expanded ── */
+    .recipe-detail { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
+    .recipe-detail.open { max-height: 600px; }
+
+    /* ── KPI icon container ── */
+    .kpi-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    /* ── Calendar day ── */
+    .cal-day { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; min-height: 110px; cursor: pointer; transition: all .15s; display: flex; flex-direction: column; }
+    .cal-day:hover { border-color: #a5b4fc; box-shadow: 0 2px 10px rgba(79,70,229,.08); }
+    .cal-day.today { border-top: 3px solid #4f46e5; background: #fafbff; }
+    .cal-day.has-menu { border-color: #c7d2fe; }
+
+    /* ── AI chat ── */
+    .chat-bubble { border-radius: 16px; padding: 14px 18px; max-width: 85%; line-height: 1.6; font-size: .9rem; }
+    .chat-user { background: #4f46e5; color: #fff; border-bottom-right-radius: 4px; margin-left: auto; }
+    .chat-ai   { background: #fff; border: 1px solid #e2e8f0; color: #0f172a; border-bottom-left-radius: 4px; box-shadow: 0 2px 8px rgba(15,23,42,.05); }
+
+    /* ── Table row hover ── */
+    .tr-hover { transition: background .1s; }
+    .tr-hover:hover { background: #f8fafc; }
+
+    /* ── Supplier card active border ── */
+    .supplier-active { border-left: 4px solid #059669; }
+
+    /* ── Responsive nav ── */
+    @media (max-width: 768px) {
+      .desktop-nav { display: none !important; }
+      .mobile-menu-btn { display: flex !important; }
+    }
+    @media (min-width: 769px) {
+      .mobile-menu-btn { display: none !important; }
+      #mobile-nav { display: none !important; }
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-100/60 text-slate-900">
+<body>
 
-  <!-- ── NAVBAR SUPERIOR UNIFICADO ────────────────────────────────── -->
-  <header class="sticky top-0 z-50 w-full bg-white border-b border-slate-200 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
-      
-      <!-- A la izquierda: Logo + Marca -->
-      <div class="flex items-center gap-3">
-        <!-- Hamburguesa móvil -->
-        <button onclick="toggleMobileMenu()" class="p-2 -ml-2 rounded-lg text-slate-600 hover:bg-slate-100 md:hidden flex items-center justify-center">
-          <span class="material-symbols-outlined text-2xl">menu</span>
-        </button>
-        <div class="p-1 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center">
-          <img src="logo.png" alt="ACFC Logo" class="h-10 w-auto object-contain" onerror="this.outerHTML='<span class=\'material-symbols-outlined text-indigo-600 text-3xl\'>restaurant</span>'"/>
+<!-- ── TOAST ROOT ───────────────────────────────────────────────── -->
+<div id="toast-root"></div>
+
+<!-- ── NAVBAR ───────────────────────────────────────────────────── -->
+<header class="sticky top-0 z-50 bg-white border-b border-slate-200" style="box-shadow: 0 1px 8px rgba(15,23,42,.06)">
+  <div class="max-w-screen-xl mx-auto px-4 sm:px-6 h-[68px] flex items-center justify-between gap-4">
+
+    <!-- Left: Logo + hamburger -->
+    <div class="flex items-center gap-3">
+      <button id="hamburger-btn" onclick="toggleMobileNav()" class="mobile-menu-btn items-center justify-center p-2 rounded-lg text-slate-500 hover:bg-slate-50 transition-colors" aria-label="Abrir menú">
+        <span class="material-symbols-outlined" style="font-size:22px">menu</span>
+      </button>
+      <div class="flex items-center gap-2.5 cursor-pointer" onclick="showScreen('dashboard')">
+        <div class="w-9 h-9 rounded-xl bg-brand-muted flex items-center justify-center overflow-hidden">
+          <img src="logo.png" alt="ACFC Logo" class="w-full h-full object-contain"
+               onerror="this.outerHTML='<span class=\'material-symbols-outlined\' style=\'color:#4f46e5;font-size:22px\'>restaurant</span>'"/>
         </div>
-        <span class="font-headline text-lg font-bold text-slate-900" style="font-family: Outfit">ACFC Kitchen</span>
+        <span class="font-display font-bold text-slate-900 text-[17px] tracking-tight" style="font-family:Outfit">ACFC Kitchen</span>
+        <span class="hidden sm:inline-block badge badge-indigo ml-1">Pro</span>
       </div>
-
-      <!-- En el centro (Navegación Principal Limpia) -->
-      <nav class="hidden md:flex items-center gap-1">
-        <a onclick="showScreen('dashboard')" class="nav-link active" id="nav-dashboard">
-          Dashboard
-        </a>
-        <a onclick="showScreen('planner')" class="nav-link" id="nav-planner">
-          Planificador
-        </a>
-        <a onclick="showScreen('inventory')" class="nav-link" id="nav-inventory">
-          Inventario
-        </a>
-        <a onclick="showScreen('recetas')" class="nav-link" id="nav-recetas">
-          Recetas y Escandallos
-        </a>
-        <a onclick="showScreen('proveedores')" class="nav-link" id="nav-proveedores">
-          Proveedores
-        </a>
-        <a onclick="showScreen('recipes')" class="nav-link" id="nav-recipes">
-          Asistente IA
-        </a>
-      </nav>
-
-      <!-- A la derecha: Acciones, Perfil y Configuración -->
-      <div class="flex items-center gap-4">
-        <!-- Nuevo Registro -->
-        <button onclick="openModal()" class="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm shadow-sm shadow-indigo-600/10 flex items-center gap-2">
-          <span class="material-symbols-outlined text-sm">add</span> Nuevo Registro
-        </button>
-
-        <!-- Divisor vertical discreto -->
-        <div class="h-6 w-[1px] bg-slate-200 hidden sm:block"></div>
-
-        <!-- Acciones Rápidas del Sistema -->
-        <div class="flex items-center gap-2">
-          <!-- Campanita Notificaciones -->
-          <button class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition-colors relative flex items-center justify-center">
-            <span class="material-symbols-outlined text-xl">notifications</span>
-            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-600 rounded-full pulse-coral"></span>
-          </button>
-          
-          <!-- Engranaje Configuración -->
-          <button class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition-colors flex items-center justify-center">
-            <span class="material-symbols-outlined text-xl">settings</span>
-          </button>
-
-          <!-- Soporte Técnico -->
-          <button class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition-colors flex items-center justify-center" title="Soporte Técnico">
-            <span class="material-symbols-outlined text-xl">help</span>
-          </button>
-        </div>
-
-        <!-- Avatar del perfil del chef -->
-        <div class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 overflow-hidden cursor-pointer hover:border-indigo-600 transition-colors flex items-center justify-center">
-          <span class="material-symbols-outlined text-slate-500 text-lg">person</span>
-        </div>
-      </div>
-
     </div>
 
-    <!-- Menú Desplegable Móvil -->
-    <div id="mobile-menu" class="hidden border-t border-slate-100 bg-white md:hidden">
-      <div class="px-2 pt-2 pb-3 space-y-1">
-        <a onclick="showScreen('dashboard')" class="nav-link w-full py-3" id="mobile-nav-dashboard">
-          Dashboard
-        </a>
-        <a onclick="showScreen('planner')" class="nav-link w-full py-3" id="mobile-nav-planner">
-          Planificador
-        </a>
-        <a onclick="showScreen('inventory')" class="nav-link w-full py-3" id="mobile-nav-inventory">
-          Inventario
-        </a>
-        <a onclick="showScreen('recetas')" class="nav-link w-full py-3" id="mobile-nav-recetas">
-          Recetas y Escandallos
-        </a>
-        <a onclick="showScreen('proveedores')" class="nav-link w-full py-3" id="mobile-nav-proveedores">
-          Proveedores
-        </a>
-        <a onclick="showScreen('recipes')" class="nav-link w-full py-3" id="mobile-nav-recipes">
-          Asistente IA
-        </a>
+    <!-- Center: Desktop nav -->
+    <nav class="desktop-nav flex items-center gap-1">
+      <a id="nav-dashboard"   onclick="showScreen('dashboard')"   class="nav-link active"><span class="material-symbols-outlined ms">dashboard</span>Dashboard</a>
+      <a id="nav-inventory"   onclick="showScreen('inventory')"   class="nav-link"><span class="material-symbols-outlined ms">inventory_2</span>Inventario</a>
+      <a id="nav-recetas"     onclick="showScreen('recetas')"     class="nav-link"><span class="material-symbols-outlined ms">receipt_long</span>Escandallos</a>
+      <a id="nav-proveedores" onclick="showScreen('proveedores')" class="nav-link"><span class="material-symbols-outlined ms">local_shipping</span>Proveedores</a>
+      <a id="nav-planner"     onclick="showScreen('planner')"     class="nav-link"><span class="material-symbols-outlined ms">calendar_month</span>Planificador</a>
+      <a id="nav-recipes"     onclick="showScreen('recipes')"     class="nav-link"><span class="material-symbols-outlined ms">auto_awesome</span>Asistente IA</a>
+    </nav>
+
+    <!-- Right: actions -->
+    <div class="flex items-center gap-2">
+      <button onclick="openNewModal()" class="flex items-center gap-1.5 bg-brand text-white font-semibold text-sm px-4 py-2 rounded-xl hover:bg-brand-dark transition-colors shadow-sm" style="font-family:Inter">
+        <span class="material-symbols-outlined" style="font-size:18px">add</span>
+        <span class="hidden sm:inline">Nuevo</span>
+      </button>
+      <button class="relative p-2 rounded-xl text-slate-500 hover:bg-slate-50 transition-colors" aria-label="Notificaciones">
+        <span class="material-symbols-outlined" style="font-size:22px">notifications</span>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full pulse-red"></span>
+      </button>
+      <button class="p-2 rounded-xl text-slate-500 hover:bg-slate-50 transition-colors hidden sm:flex" aria-label="Ajustes">
+        <span class="material-symbols-outlined" style="font-size:22px">settings</span>
+      </button>
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand to-brand-light flex items-center justify-center text-white font-bold text-sm cursor-pointer" title="Chef Jefe">CJ</div>
+    </div>
+  </div>
+
+  <!-- Mobile nav -->
+  <div id="mobile-nav" class="hidden border-t border-slate-100 bg-white pb-3">
+    <div class="px-4 pt-2 space-y-1">
+      <a id="mnav-dashboard"   onclick="showScreen('dashboard')"   class="nav-link w-full">  <span class="material-symbols-outlined ms">dashboard</span>Dashboard</a>
+      <a id="mnav-inventory"   onclick="showScreen('inventory')"   class="nav-link w-full">  <span class="material-symbols-outlined ms">inventory_2</span>Inventario</a>
+      <a id="mnav-recetas"     onclick="showScreen('recetas')"     class="nav-link w-full">  <span class="material-symbols-outlined ms">receipt_long</span>Escandallos</a>
+      <a id="mnav-proveedores" onclick="showScreen('proveedores')" class="nav-link w-full">  <span class="material-symbols-outlined ms">local_shipping</span>Proveedores</a>
+      <a id="mnav-planner"     onclick="showScreen('planner')"     class="nav-link w-full">  <span class="material-symbols-outlined ms">calendar_month</span>Planificador</a>
+      <a id="mnav-recipes"     onclick="showScreen('recipes')"     class="nav-link w-full">  <span class="material-symbols-outlined ms">auto_awesome</span>Asistente IA</a>
+    </div>
+  </div>
+</header>
+
+<!-- ── MODAL: NUEVO REGISTRO ────────────────────────────────────── -->
+<div id="modal-new" class="modal-overlay" onclick="if(event.target===this)closeNewModal()">
+  <div class="modal-box">
+    <div class="flex justify-between items-center mb-5">
+      <h3 class="text-lg font-bold text-slate-900" style="font-family:Outfit">Crear nuevo elemento</h3>
+      <button onclick="closeNewModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <p class="text-sm text-slate-500 mb-5">¿Qué tipo de recurso deseas añadir al sistema?</p>
+    <div class="grid grid-cols-2 gap-3">
+      <button onclick="closeNewModal();showScreen('inventory');toast('🥦 Añade un ingrediente en la sección Inventario')"
+        class="flex flex-col items-center gap-2 p-5 border border-slate-200 rounded-xl hover:border-brand hover:bg-brand-muted transition-all group">
+        <span class="material-symbols-outlined text-3xl text-brand">inventory_2</span>
+        <span class="text-sm font-semibold text-slate-700 group-hover:text-brand">Ingrediente</span>
+      </button>
+      <button onclick="closeNewModal();showScreen('recetas');toast('📋 Añade una receta en Escandallos')"
+        class="flex flex-col items-center gap-2 p-5 border border-slate-200 rounded-xl hover:border-brand hover:bg-brand-muted transition-all group">
+        <span class="material-symbols-outlined text-3xl text-brand">receipt_long</span>
+        <span class="text-sm font-semibold text-slate-700 group-hover:text-brand">Receta</span>
+      </button>
+      <button onclick="closeNewModal();showScreen('proveedores');toast('🚚 Añade un proveedor en el directorio')"
+        class="flex flex-col items-center gap-2 p-5 border border-slate-200 rounded-xl hover:border-success hover:bg-success-light transition-all group">
+        <span class="material-symbols-outlined text-3xl text-success">local_shipping</span>
+        <span class="text-sm font-semibold text-slate-700 group-hover:text-success">Proveedor</span>
+      </button>
+      <button onclick="closeNewModal();showScreen('planner');toast('📅 Planifica el menú en el Planificador')"
+        class="flex flex-col items-center gap-2 p-5 border border-slate-200 rounded-xl hover:border-warn hover:bg-warn-light transition-all group">
+        <span class="material-symbols-outlined text-3xl text-warn">calendar_month</span>
+        <span class="text-sm font-semibold text-slate-700 group-hover:text-warn">Menú del día</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ─────────────────────────────────────────────────────── -->
+<main class="max-w-screen-xl mx-auto px-4 sm:px-6 py-8">
+
+  <!-- ════ SCREEN: DASHBOARD ════════════════════════════════════ -->
+  <div id="screen-dashboard" class="screen active">
+
+    <!-- Header -->
+    <div class="flex flex-wrap justify-between items-end gap-4">
+      <div>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1" id="dash-date"></p>
+        <h1 class="text-3xl font-bold text-slate-900" style="font-family:Outfit">Dashboard</h1>
+        <p class="text-sm text-slate-500 mt-1">Vista ejecutiva del estado del sistema gastronómico.</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="badge badge-green flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-success inline-block"></span>Sistema operativo</span>
+        <button class="flex items-center gap-1.5 px-3 py-2 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+          <span class="material-symbols-outlined" style="font-size:16px">file_download</span>Exportar
+        </button>
       </div>
     </div>
-  </header>
 
-  <!-- ── MODAL: NUEVO REGISTRO ────────────────────────────────────── -->
-  <div id="new-register-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-    <div class="bg-white border border-slate-200 shadow-xl rounded-xl max-w-md w-full p-6 space-y-4 transform scale-95 transition-transform duration-300">
-      <div class="flex justify-between items-center">
-        <h3 class="text-lg font-bold text-slate-950" style="font-family: Outfit">Crear nuevo elemento</h3>
-        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined">close</span></button>
+    <!-- KPI cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card p-5 cursor-pointer" onclick="showScreen('inventory')">
+        <div class="flex items-start justify-between mb-4">
+          <div class="kpi-icon bg-brand-muted"><span class="material-symbols-outlined text-brand" style="font-size:22px">kitchen</span></div>
+          <span class="badge badge-green">+12</span>
+        </div>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Ingredientes</p>
+        <p class="text-3xl font-bold text-slate-900 mt-1" style="font-family:Outfit">482</p>
+        <p class="text-xs text-slate-400 mt-2">Líneas en stock activo</p>
       </div>
-      <p class="text-sm text-slate-500">Selecciona el tipo de recurso que deseas agregar a la base de datos de ACFC Kitchen:</p>
-      <div class="grid grid-cols-3 gap-3">
-        <button onclick="alert('Funcionalidad de Inventario en desarrollo'); closeModal();" class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-center hover:border-indigo-500 hover:bg-indigo-50/20 transition-all">
-          <span class="material-symbols-outlined text-2xl text-indigo-600 mb-1 block">inventory_2</span>
-          <span class="text-xs font-semibold text-slate-700">Inventario</span>
-        </button>
-        <button onclick="alert('Funcionalidad de Receta en desarrollo'); closeModal();" class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-center hover:border-indigo-500 hover:bg-indigo-50/20 transition-all">
-          <span class="material-symbols-outlined text-2xl text-indigo-600 mb-1 block">receipt_long</span>
-          <span class="text-xs font-semibold text-slate-700">Receta</span>
-        </button>
-        <button onclick="alert('Funcionalidad de Proveedor en desarrollo'); closeModal();" class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-center hover:border-indigo-500 hover:bg-indigo-50/20 transition-all">
-          <span class="material-symbols-outlined text-2xl text-indigo-600 mb-1 block">group</span>
-          <span class="text-xs font-semibold text-slate-700">Proveedor</span>
-        </button>
+      <div class="card p-5 cursor-pointer border-l-4 border-l-red-500" onclick="showScreen('inventory')">
+        <div class="flex items-start justify-between mb-4">
+          <div class="kpi-icon bg-red-50"><span class="material-symbols-outlined text-red-500" style="font-size:22px">warning</span></div>
+          <span class="badge badge-red pulse-red">Urgente</span>
+        </div>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Stock Crítico</p>
+        <p class="text-3xl font-bold text-red-600 mt-1" style="font-family:Outfit">12</p>
+        <p class="text-xs text-slate-400 mt-2">Requieren reorden inmediato</p>
+      </div>
+      <div class="card p-5 cursor-pointer" onclick="showScreen('proveedores')">
+        <div class="flex items-start justify-between mb-4">
+          <div class="kpi-icon bg-sky-50"><span class="material-symbols-outlined text-sky-600" style="font-size:22px">local_shipping</span></div>
+          <span class="badge badge-amber">8 pend.</span>
+        </div>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pedidos Activos</p>
+        <p class="text-3xl font-bold text-slate-900 mt-1" style="font-family:Outfit">8</p>
+        <p class="text-xs text-slate-400 mt-2">Órdenes pendientes de entrega</p>
+      </div>
+      <div class="card p-5">
+        <div class="flex items-start justify-between mb-4">
+          <div class="kpi-icon bg-emerald-50"><span class="material-symbols-outlined text-success" style="font-size:22px">euro</span></div>
+          <span class="badge badge-green">75%</span>
+        </div>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Presupuesto</p>
+        <p class="text-3xl font-bold text-slate-900 mt-1" style="font-family:Outfit">18.4K€</p>
+        <div class="mt-3 prog-track"><div class="prog-fill bg-success w-3/4"></div></div>
+        <p class="text-xs text-slate-400 mt-1.5">Límite mensual: 24.5K€</p>
+      </div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Spending chart -->
+      <div class="card p-6 lg:col-span-2">
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h3 class="font-bold text-slate-900" style="font-family:Outfit">Gasto Mensual por Categoría</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Últimos 6 meses — Acumulado en euros</p>
+          </div>
+          <select class="text-xs border border-slate-200 rounded-lg px-3 py-1.5 text-slate-600 bg-slate-50 outline-none">
+            <option>2026</option><option>2025</option>
+          </select>
+        </div>
+        <svg viewBox="0 0 480 160" class="w-full" style="overflow:visible">
+          <!-- Grid lines -->
+          <line x1="0" y1="0"   x2="480" y2="0"   stroke="#f1f5f9" stroke-width="1"/>
+          <line x1="0" y1="40"  x2="480" y2="40"  stroke="#f1f5f9" stroke-width="1"/>
+          <line x1="0" y1="80"  x2="480" y2="80"  stroke="#f1f5f9" stroke-width="1"/>
+          <line x1="0" y1="120" x2="480" y2="120" stroke="#f1f5f9" stroke-width="1"/>
+          <line x1="0" y1="160" x2="480" y2="160" stroke="#f1f5f9" stroke-width="1"/>
+          <!-- Area fill brand -->
+          <path d="M0,130 L80,100 L160,110 L240,75 L320,60 L400,40 L480,50 L480,160 L0,160 Z" fill="url(#grad1)" opacity=".4"/>
+          <defs>
+            <linearGradient id="grad1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#4f46e5" stop-opacity=".5"/>
+              <stop offset="100%" stop-color="#4f46e5" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- Line -->
+          <polyline points="0,130 80,100 160,110 240,75 320,60 400,40 480,50" fill="none" stroke="#4f46e5" stroke-width="2.5" stroke-linejoin="round"/>
+          <!-- Dots -->
+          <circle cx="0"   cy="130" r="4" fill="#4f46e5" stroke="#fff" stroke-width="2"/>
+          <circle cx="80"  cy="100" r="4" fill="#4f46e5" stroke="#fff" stroke-width="2"/>
+          <circle cx="160" cy="110" r="4" fill="#4f46e5" stroke="#fff" stroke-width="2"/>
+          <circle cx="240" cy="75"  r="4" fill="#4f46e5" stroke="#fff" stroke-width="2"/>
+          <circle cx="320" cy="60"  r="4" fill="#4f46e5" stroke="#fff" stroke-width="2"/>
+          <circle cx="400" cy="40"  r="4" fill="#4f46e5" stroke="#fff" stroke-width="2"/>
+          <circle cx="480" cy="50"  r="4" fill="#4f46e5" stroke="#fff" stroke-width="2"/>
+          <!-- Area fill success -->
+          <path d="M0,145 L80,130 L160,135 L240,115 L320,125 L400,100 L480,110 L480,160 L0,160 Z" fill="url(#grad2)" opacity=".3"/>
+          <defs>
+            <linearGradient id="grad2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#059669" stop-opacity=".5"/>
+              <stop offset="100%" stop-color="#059669" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <polyline points="0,145 80,130 160,135 240,115 320,125 400,100 480,110" fill="none" stroke="#059669" stroke-width="2" stroke-linejoin="round" stroke-dasharray="4,3"/>
+          <!-- Labels -->
+          <text x="0"   y="175" text-anchor="middle" font-size="10" fill="#94a3b8">Ene</text>
+          <text x="80"  y="175" text-anchor="middle" font-size="10" fill="#94a3b8">Feb</text>
+          <text x="160" y="175" text-anchor="middle" font-size="10" fill="#94a3b8">Mar</text>
+          <text x="240" y="175" text-anchor="middle" font-size="10" fill="#94a3b8">Abr</text>
+          <text x="320" y="175" text-anchor="middle" font-size="10" fill="#94a3b8">May</text>
+          <text x="400" y="175" text-anchor="middle" font-size="10" fill="#94a3b8">Jun</text>
+          <text x="480" y="175" text-anchor="middle" font-size="10" fill="#94a3b8">Jul</text>
+        </svg>
+        <div class="flex gap-5 mt-2">
+          <div class="flex items-center gap-2 text-xs text-slate-500"><span class="w-3 h-0.5 rounded bg-brand inline-block"></span>Frescos/Carne</div>
+          <div class="flex items-center gap-2 text-xs text-slate-500"><span class="w-3 h-0.5 rounded bg-success inline-block" style="border-style:dashed"></span>Despensa/Seco</div>
+        </div>
+      </div>
+
+      <!-- Category donut -->
+      <div class="card p-6 flex flex-col">
+        <h3 class="font-bold text-slate-900 mb-1" style="font-family:Outfit">Distribución Stock</h3>
+        <p class="text-xs text-slate-400 mb-5">Por categoría principal</p>
+        <div class="flex-grow flex items-center justify-center">
+          <svg viewBox="0 0 120 120" class="w-36 h-36">
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#eef2ff" stroke-width="18"/>
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#4f46e5" stroke-width="18" stroke-dasharray="115 174" stroke-dashoffset="-43" stroke-linecap="round"/>
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#059669" stroke-width="18" stroke-dasharray="58 231" stroke-dashoffset="-158" stroke-linecap="round"/>
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#d97706" stroke-width="18" stroke-dasharray="43 246" stroke-dashoffset="-216" stroke-linecap="round"/>
+            <text x="60" y="55" text-anchor="middle" font-size="14" font-weight="700" fill="#0f172a">482</text>
+            <text x="60" y="69" text-anchor="middle" font-size="8" fill="#94a3b8">ítems</text>
+          </svg>
+        </div>
+        <div class="space-y-2.5 mt-4">
+          <div class="flex justify-between items-center text-sm"><div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-brand"></span><span class="text-slate-600">Frescos</span></div><span class="font-semibold text-slate-900">40%</span></div>
+          <div class="flex justify-between items-center text-sm"><div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-success"></span><span class="text-slate-600">Despensa</span></div><span class="font-semibold text-slate-900">20%</span></div>
+          <div class="flex justify-between items-center text-sm"><div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-warn"></span><span class="text-slate-600">Otros</span></div><span class="font-semibold text-slate-900">40%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom row: recent activity + alerts -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Recent activity -->
+      <div class="card p-6">
+        <h3 class="font-bold text-slate-900 mb-5" style="font-family:Outfit">Actividad Reciente</h3>
+        <div class="space-y-4" id="activity-list">
+          <!-- JS renders -->
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div class="card p-6">
+        <div class="flex justify-between items-center mb-5">
+          <h3 class="font-bold text-slate-900" style="font-family:Outfit">Alertas del Sistema</h3>
+          <span class="badge badge-red">3 activas</span>
+        </div>
+        <div class="space-y-3" id="alert-list">
+          <!-- JS renders -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick access -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="card p-5 cursor-pointer hover:-translate-y-0.5 transition-transform" onclick="showScreen('recetas')">
+        <div class="kpi-icon bg-brand-muted mb-3"><span class="material-symbols-outlined text-brand" style="font-size:22px">receipt_long</span></div>
+        <p class="font-bold text-slate-900 text-sm" style="font-family:Outfit">Escandallos</p>
+        <p class="text-xs text-slate-400 mt-0.5">24 recetas activas</p>
+      </div>
+      <div class="card p-5 cursor-pointer hover:-translate-y-0.5 transition-transform" onclick="showScreen('proveedores')">
+        <div class="kpi-icon bg-emerald-50 mb-3"><span class="material-symbols-outlined text-success" style="font-size:22px">local_shipping</span></div>
+        <p class="font-bold text-slate-900 text-sm" style="font-family:Outfit">Proveedores</p>
+        <p class="text-xs text-slate-400 mt-0.5">7 homologados</p>
+      </div>
+      <div class="card p-5 cursor-pointer hover:-translate-y-0.5 transition-transform" onclick="showScreen('planner')">
+        <div class="kpi-icon bg-amber-50 mb-3"><span class="material-symbols-outlined text-warn" style="font-size:22px">calendar_month</span></div>
+        <p class="font-bold text-slate-900 text-sm" style="font-family:Outfit">Planificador</p>
+        <p class="text-xs text-slate-400 mt-0.5">Julio 2026</p>
+      </div>
+      <div class="card p-5 cursor-pointer hover:-translate-y-0.5 transition-transform" onclick="showScreen('recipes')">
+        <div class="kpi-icon bg-pink-50 mb-3"><span class="material-symbols-outlined text-pink-600" style="font-size:22px">auto_awesome</span></div>
+        <p class="font-bold text-slate-900 text-sm" style="font-family:Outfit">Asistente IA</p>
+        <p class="text-xs text-slate-400 mt-0.5">Extracción NLP</p>
       </div>
     </div>
   </div>
 
-  <!-- ── CONTENT CONTAINER ────────────────────────────────────────── -->
-  <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8 overflow-y-auto">
+  <!-- ════ SCREEN: INVENTARIO ═══════════════════════════════════ -->
+  <div id="screen-inventory" class="screen">
 
-    <!-- ═══ SCREEN: DASHBOARD (MÉTRICAS RESTAURADAS EN GRID) ══════ -->
-    <div id="screen-dashboard" class="screen active flex-col space-y-8">
-      <div class="flex justify-between items-end">
-        <div>
-          <h2 class="text-2xl md:text-3xl font-bold text-slate-900" style="font-family: Outfit">Dashboard</h2>
-          <p class="text-sm text-slate-500">Resumen ejecutivo del estado del sistema gastronómico claro e intuitivo.</p>
-        </div>
+    <div class="flex flex-wrap justify-between items-end gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-slate-900" style="font-family:Outfit">Control de Inventario</h1>
+        <p class="text-sm text-slate-500 mt-1">Live Stock Matrix — datos en tiempo real</p>
       </div>
+      <div class="flex gap-2">
+        <button onclick="toast('📤 Exportando CSV...')" class="flex items-center gap-1.5 px-3 py-2 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+          <span class="material-symbols-outlined" style="font-size:16px">file_download</span>CSV
+        </button>
+        <button onclick="toast('🔄 Sincronizando con ERP...')" class="flex items-center gap-1.5 px-3 py-2 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-brand-dark transition-colors">
+          <span class="material-symbols-outlined" style="font-size:16px">sync</span>Sync ERP
+        </button>
+      </div>
+    </div>
 
-      <!-- Bento stats (Restaurados y Mejorados) -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="premium-card p-6 relative overflow-hidden group cursor-pointer hover:shadow-md transition-shadow" onclick="showScreen('inventory')">
-          <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><span class="material-symbols-outlined text-6xl text-indigo-600">kitchen</span></div>
-          <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Total Ingredientes</div>
-          <div class="font-display-lg text-slate-900 flex items-baseline gap-2" style="font-size:32px;font-family:Outfit">482 <span class="text-xs font-semibold text-emerald-600">+12 esta semana</span></div>
+    <!-- Stats row -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="card p-4 text-center"><p class="text-2xl font-bold text-slate-900" style="font-family:Outfit">482</p><p class="text-xs text-slate-400 mt-0.5">Total líneas</p></div>
+      <div class="card p-4 text-center"><p class="text-2xl font-bold text-red-500" style="font-family:Outfit">12</p><p class="text-xs text-slate-400 mt-0.5">Stock crítico</p></div>
+      <div class="card p-4 text-center"><p class="text-2xl font-bold text-success" style="font-family:Outfit">94%</p><p class="text-xs text-slate-400 mt-0.5">Fill rate</p></div>
+      <div class="card p-4 text-center"><p class="text-2xl font-bold text-slate-900" style="font-family:Outfit">18.4K€</p><p class="text-xs text-slate-400 mt-0.5">Valor stock</p></div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card p-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-3 text-slate-400" style="font-size:18px">search</span>
+          <input id="inv-search" type="text" placeholder="Buscar ingrediente..." onkeyup="filterInventory()"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:border-brand transition-colors placeholder-slate-400"/>
         </div>
-        <div class="premium-card p-6 relative overflow-hidden group border-l-4 border-l-red-500 cursor-pointer hover:shadow-md transition-shadow" onclick="showScreen('inventory')">
-          <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><span class="material-symbols-outlined text-6xl text-red-500">warning</span></div>
-          <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-red-500 pulse-coral"></span>Stock Crítico
-          </div>
-          <div class="flex items-baseline gap-2 font-bold text-red-600" style="font-size:32px;font-family:Outfit">12 <span class="text-xs text-slate-400 font-medium ml-2">requieren reorden</span></div>
-        </div>
-        <div class="premium-card p-6 relative overflow-hidden group cursor-pointer hover:shadow-md transition-shadow">
-          <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><span class="material-symbols-outlined text-6xl text-indigo-400">receipt_long</span></div>
-          <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Pedidos de Compra</div>
-          <div class="flex items-baseline gap-2 font-bold text-indigo-600" style="font-size:32px;font-family:Outfit">8 <span class="text-xs text-slate-400 font-medium ml-2">pendientes</span></div>
-        </div>
-        <div class="premium-card p-6 flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div>
-            <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Presupuesto Ejecutado</div>
-            <div class="text-xl font-bold text-slate-900" style="font-family:Outfit">$18,420.00</div>
-          </div>
-          <div class="mt-4">
-            <div class="flex justify-between text-xs text-slate-500 mb-1"><span>75%</span><span>Límite: $24,500</span></div>
-            <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-              <div class="h-full bg-emerald-500 w-[75%] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.3)]"></div>
+        <select id="inv-cat" onchange="filterInventory()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-600 outline-none focus:border-brand">
+          <option value="">Todas las categorías</option>
+          <option>Frescos</option><option>Asiático</option><option>Despensa</option>
+          <option>Congelados</option><option>Lácteos</option><option>Carnicería</option>
+        </select>
+        <select id="inv-price" onchange="filterInventory()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-600 outline-none focus:border-brand">
+          <option value="">Cualquier precio</option>
+          <option value="low">Menos de 10€</option>
+          <option value="mid">Entre 10€ y 50€</option>
+          <option value="high">Más de 50€</option>
+        </select>
+        <select id="inv-status" onchange="filterInventory()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-600 outline-none focus:border-brand">
+          <option value="">Cualquier estado</option>
+          <option value="critical">Stock crítico</option>
+          <option value="ok">Stock óptimo</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+        <h3 class="font-bold text-slate-900" style="font-family:Outfit">Live Stock Matrix</h3>
+        <span id="inv-count" class="text-xs font-medium text-slate-400"></span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-slate-50 border-b border-slate-100 text-xs text-slate-400 uppercase tracking-wider">
+            <tr>
+              <th class="px-6 py-3">Ingrediente</th>
+              <th class="px-4 py-3">Categoría</th>
+              <th class="px-4 py-3">Stock</th>
+              <th class="px-4 py-3 hidden md:table-cell">Nivel</th>
+              <th class="px-4 py-3 hidden sm:table-cell">Coste/u</th>
+              <th class="px-4 py-3 hidden lg:table-cell">Proveedor</th>
+              <th class="px-4 py-3">Estado</th>
+              <th class="px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody id="inv-tbody" class="divide-y divide-slate-50 bg-white text-slate-700"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SCREEN: RECETAS Y ESCANDALLOS ═══════════════════════ -->
+  <div id="screen-recetas" class="screen">
+
+    <div class="flex flex-wrap justify-between items-end gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-slate-900" style="font-family:Outfit">Recetas y Escandallos</h1>
+        <p class="text-sm text-slate-500 mt-1">Fichas de coste, márgenes y explosión de ingredientes</p>
+      </div>
+      <div class="flex gap-2">
+        <select class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 outline-none">
+          <option>Todas las familias</option><option>Arroces</option><option>Pescados</option><option>Carnes</option><option>Postres</option>
+        </select>
+        <button onclick="toast('➕ Formulario de nueva receta próximamente')" class="flex items-center gap-1.5 px-4 py-2 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-brand-dark transition-colors">
+          <span class="material-symbols-outlined" style="font-size:16px">add</span>Nueva receta
+        </button>
+      </div>
+    </div>
+
+    <!-- Summary stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="card p-4 text-center"><p class="text-2xl font-bold text-slate-900" style="font-family:Outfit">24</p><p class="text-xs text-slate-400 mt-0.5">Recetas activas</p></div>
+      <div class="card p-4 text-center"><p class="text-2xl font-bold text-success" style="font-family:Outfit">67%</p><p class="text-xs text-slate-400 mt-0.5">Margen medio</p></div>
+      <div class="card p-4 text-center"><p class="text-2xl font-bold text-brand" style="font-family:Outfit">4.82€</p><p class="text-xs text-slate-400 mt-0.5">Coste/ración medio</p></div>
+      <div class="card p-4 text-center"><p class="text-2xl font-bold text-warn" style="font-family:Outfit">3</p><p class="text-xs text-slate-400 mt-0.5">Coste alto (&gt;10€)</p></div>
+    </div>
+
+    <!-- Recipe cards -->
+    <div class="space-y-4" id="recipe-list"></div>
+  </div>
+
+  <!-- ════ SCREEN: PROVEEDORES ══════════════════════════════════ -->
+  <div id="screen-proveedores" class="screen">
+
+    <div class="flex flex-wrap justify-between items-end gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-slate-900" style="font-family:Outfit">Directorio de Proveedores</h1>
+        <p class="text-sm text-slate-500 mt-1">Catálogo homologado · tarifas · condiciones de pago</p>
+      </div>
+      <div class="flex gap-2">
+        <input type="text" id="supp-search" placeholder="Buscar proveedor..." onkeyup="filterSuppliers()"
+          class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm outline-none focus:border-brand transition-colors placeholder-slate-400"/>
+        <button onclick="toast('➕ Formulario de nuevo proveedor próximamente')" class="flex items-center gap-1.5 px-4 py-2 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-brand-dark transition-colors">
+          <span class="material-symbols-outlined" style="font-size:16px">add</span>Añadir
+        </button>
+      </div>
+    </div>
+
+    <!-- Supplier stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="card p-4 text-center"><p class="text-2xl font-bold text-slate-900" style="font-family:Outfit">7</p><p class="text-xs text-slate-400 mt-0.5">Proveedores activos</p></div>
+      <div class="card p-4 text-center"><p class="text-2xl font-bold text-success" style="font-family:Outfit">94%</p><p class="text-xs text-slate-400 mt-0.5">On-time delivery</p></div>
+      <div class="card p-4 text-center"><p class="text-2xl font-bold text-brand" style="font-family:Outfit">30d</p><p class="text-xs text-slate-400 mt-0.5">Plazo pago medio</p></div>
+      <div class="card p-4 text-center"><p class="text-2xl font-bold text-warn" style="font-family:Outfit">2</p><p class="text-xs text-slate-400 mt-0.5">Pedidos urgentes</p></div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" id="supplier-grid"></div>
+  </div>
+
+  <!-- ════ SCREEN: PLANIFICADOR ═════════════════════════════════ -->
+  <div id="screen-planner" class="screen">
+
+    <div class="flex flex-wrap justify-between items-center gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-slate-900" style="font-family:Outfit">Planificador Mensual</h1>
+        <p class="text-sm text-slate-500 mt-1">Julio 2026 — Menú diario almuerzo + cena</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="toast('⬅️ Navegación de mes próximamente')" class="p-2 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors text-slate-500">
+          <span class="material-symbols-outlined" style="font-size:18px">chevron_left</span>
+        </button>
+        <span class="font-semibold text-slate-700 text-sm">Julio 2026</span>
+        <button onclick="toast('➡️ Navegación de mes próximamente')" class="p-2 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors text-slate-500">
+          <span class="material-symbols-outlined" style="font-size:18px">chevron_right</span>
+        </button>
+        <button onclick="toast('📋 Generando lista de la compra...')" class="flex items-center gap-1.5 px-4 py-2 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-brand-dark transition-colors">
+          <span class="material-symbols-outlined" style="font-size:16px">shopping_cart</span>Lista compra
+        </button>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="flex flex-wrap gap-4 text-xs text-slate-500">
+      <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-brand inline-block"></span>Hoy</div>
+      <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-brand-muted border border-brand/30 inline-block"></span>Menú planificado</div>
+      <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-white border border-slate-200 inline-block"></span>Sin planificar</div>
+    </div>
+
+    <!-- Day headers -->
+    <div class="grid grid-cols-7 gap-2">
+      <div class="text-center text-xs font-semibold text-slate-400 uppercase py-1">Lun</div>
+      <div class="text-center text-xs font-semibold text-slate-400 uppercase py-1">Mar</div>
+      <div class="text-center text-xs font-semibold text-slate-400 uppercase py-1">Mié</div>
+      <div class="text-center text-xs font-semibold text-slate-400 uppercase py-1">Jue</div>
+      <div class="text-center text-xs font-semibold text-slate-400 uppercase py-1">Vie</div>
+      <div class="text-center text-xs font-semibold text-slate-400 uppercase py-1">Sáb</div>
+      <div class="text-center text-xs font-semibold text-slate-400 uppercase py-1">Dom</div>
+    </div>
+    <div class="grid grid-cols-7 gap-2" id="cal-grid"></div>
+
+  </div>
+
+  <!-- ════ SCREEN: ASISTENTE IA ═════════════════════════════════ -->
+  <div id="screen-recipes" class="screen">
+
+    <div class="flex flex-wrap justify-between items-end gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-slate-900" style="font-family:Outfit">Asistente IA</h1>
+        <p class="text-sm text-slate-500 mt-1">Extracción NLP de ingredientes · Generación automática de escandallos</p>
+      </div>
+      <span class="badge badge-green flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-success inline-block"></span>Modelo activo</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+      <!-- Chat area -->
+      <div class="card p-6 flex flex-col lg:col-span-3" style="min-height:520px">
+        <div class="flex-grow overflow-y-auto space-y-4 mb-5 pr-1" id="chat-messages">
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-xl bg-brand-muted flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-brand" style="font-size:18px">auto_awesome</span>
+            </div>
+            <div class="chat-bubble chat-ai">
+              👋 Hola, soy tu asistente gastronómico IA. Pega el texto de una receta y extraeré automáticamente los ingredientes, cantidades y unidades para generar el escandallo.
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Quick access matrix -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="premium-card p-6 cursor-pointer hover:border-indigo-300 hover:shadow-md transition-all" onclick="showScreen('recetas')">
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center"><span class="material-symbols-outlined text-indigo-600 text-2xl">receipt_long</span></div>
-            <div><div class="text-lg font-bold text-slate-900" style="font-family:Outfit">Recetas</div><div class="text-xs text-slate-500">Cálculo de Escandallos</div></div>
+        <div class="border-t border-slate-100 pt-4">
+          <div class="flex gap-3">
+            <textarea id="ai-input" rows="3" placeholder="Pega el texto de una receta aquí... Ej: 'Para 10 personas necesitamos 500g de arroz arborio, 200ml de vino blanco, 50g de mantequilla...'"
+              class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-brand transition-colors resize-none placeholder-slate-400"></textarea>
           </div>
-          <p class="text-sm text-slate-500">Consulta los escandallos actualizados, costos de porción y márgenes brutos.</p>
-        </div>
-        <div class="premium-card p-6 cursor-pointer hover:border-indigo-300 hover:shadow-md transition-all" onclick="showScreen('proveedores')">
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-12 h-12 rounded-lg bg-emerald-50 flex items-center justify-center"><span class="material-symbols-outlined text-emerald-600 text-2xl">group</span></div>
-            <div><div class="text-lg font-bold text-slate-900" style="font-family:Outfit">Proveedores</div><div class="text-xs text-slate-500">Directorio y Tarifas</div></div>
-          </div>
-          <p class="text-sm text-slate-500">Catálogo de proveedores homologados y optimización por costo unitario mínimo.</p>
-        </div>
-        <div class="premium-card p-6 cursor-pointer hover:border-indigo-300 hover:shadow-md transition-all" onclick="showScreen('inventory')">
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-12 h-12 rounded-lg bg-amber-50 flex items-center justify-center"><span class="material-symbols-outlined text-amber-600 text-2xl">inventory_2</span></div>
-            <div><div class="text-lg font-bold text-slate-900" style="font-family:Outfit">Inventario</div><div class="text-xs text-slate-500">Buscador y Alertas</div></div>
-          </div>
-          <p class="text-sm text-slate-500">Monitoreo de ingredientes en stock y asistente automático de reposición.</p>
-        </div>
-        <div class="premium-card p-6 cursor-pointer hover:border-indigo-300 hover:shadow-md transition-all" onclick="showScreen('recipes')">
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-12 h-12 rounded-lg bg-pink-50 flex items-center justify-center"><span class="material-symbols-outlined text-pink-600 text-2xl">auto_awesome</span></div>
-            <div><div class="text-lg font-bold text-slate-900" style="font-family:Outfit">Asistente IA</div><div class="text-xs text-slate-500">Procesamiento NLP</div></div>
-          </div>
-          <p class="text-sm text-slate-500">Extrae ingredientes de recetas de forma textual y genera el escandallo automáticamente.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ SCREEN: PLANNER ════════════════════════════════════════ -->
-    <div id="screen-planner" class="screen flex-col gap-6">
-      <div class="flex justify-between items-center">
-        <h2 class="text-2xl font-bold text-slate-900" style="font-family:Outfit">Planificador Mensual</h2>
-      </div>
-      <div class="grid grid-cols-7 gap-2 mb-2">
-        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Lun</div>
-        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Mar</div>
-        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Mié</div>
-        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Jue</div>
-        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Vie</div>
-        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Sáb</div>
-        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Dom</div>
-      </div>
-      <div class="grid grid-cols-7 gap-2" id="cal-grid">
-        <!-- Days rendered by JS -->
-      </div>
-    </div>
-
-    <!-- ═══ SCREEN: INVENTORY (CON BUSCADOR Y FILTROS) ════════════ -->
-    <div id="screen-inventory" class="screen flex-col space-y-6">
-      <div class="flex justify-between items-end">
-        <div>
-          <h2 class="text-2xl font-bold text-slate-900" style="font-family:Outfit">Control de Inventario</h2>
-        </div>
-      </div>
-
-      <div class="premium-card p-6 space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="relative">
-            <span class="material-symbols-outlined absolute left-3 top-3.5 text-slate-400">search</span>
-            <input type="text" id="search-input" onkeyup="filterInventory()" placeholder="Buscar ingrediente..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-3 text-sm outline-none placeholder:text-slate-400"/>
-          </div>
-          <div>
-            <select id="category-filter" onchange="filterInventory()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm outline-none text-slate-700">
-              <option value="">Todas las Categorías</option>
-              <option value="Frescos">Frescos</option>
-              <option value="Asiático">Asiático</option>
-              <option value="Despensa">Despensa</option>
-              <option value="Congelados">Congelados</option>
-              <option value="Lácteos">Lácteos</option>
-            </select>
-          </div>
-          <div>
-            <select id="price-filter" onchange="filterInventory()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm outline-none text-slate-700">
-              <option value="">Cualquier Precio</option>
-              <option value="low">Menos de $10.00</option>
-              <option value="mid">Entre $10.00 y $50.00</option>
-              <option value="high">Más de $50.00</option>
-            </select>
-          </div>
-          <div>
-            <select id="stock-filter" onchange="filterInventory()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm outline-none text-slate-700">
-              <option value="">Cualquier Stock</option>
-              <option value="critical">Bajo Stock / Crítico</option>
-              <option value="optimal">Disponible / Óptimo</option>
-            </select>
+          <div class="flex justify-between items-center mt-3">
+            <p class="text-xs text-slate-400">Soporta texto libre, formato PDF o imagen escaneada</p>
+            <button onclick="processAI()" class="flex items-center gap-2 px-5 py-2.5 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-brand-dark transition-all">
+              <span class="material-symbols-outlined" style="font-size:16px">send</span>Procesar
+            </button>
           </div>
         </div>
       </div>
 
-      <div class="premium-card overflow-hidden">
-        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
-          <h3 class="font-headline-md text-headline-md text-slate-900 font-bold" style="font-family:Outfit">Live Stock Matrix</h3>
-          <span class="text-xs text-slate-500 font-medium" id="results-count">Mostrando todos los ingredientes</span>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-50/75 border-b border-slate-200/80">
-                <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider pl-6">Ingrediente</th>
-                <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Categoría</th>
-                <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Stock Actual</th>
-                <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Stock Mínimo</th>
-                <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Costo Unitario</th>
-                <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider pr-6">Estado</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 text-sm text-slate-700 bg-white" id="inventory-tbody-filters">
-              <!-- JS code renders list -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ SCREEN: RECETAS Y ESCANDALLOS ════════════════════════ -->
-    <div id="screen-recetas" class="screen flex-col space-y-6">
-      <div>
-        <h2 class="text-2xl font-bold text-slate-900" style="font-family:Outfit">Recetas y Escandallos</h2>
-      </div>
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 space-y-4">
-          <div class="premium-card p-6 space-y-4">
-            <h3 class="text-lg font-bold text-slate-900">Fichas de Costo</h3>
-            <div class="divide-y divide-slate-100">
-              <div class="py-4 flex justify-between items-center">
-                <div>
-                  <div class="font-semibold text-slate-950">Mushroom Risotto</div>
-                  <div class="text-xs text-slate-500 font-medium">Pasta/Arroz • 10 pax</div>
-                </div>
-                <div class="text-right">
-                  <div class="font-bold text-slate-900">$3.33 / ración</div>
-                  <div class="text-xs text-emerald-600 font-semibold">Margen: 70%</div>
-                </div>
-              </div>
-              <div class="py-4 flex justify-between items-center">
-                <div>
-                  <div class="font-semibold text-slate-950">Grilled Salmon</div>
-                  <div class="text-xs text-slate-500 font-medium">Pescados • 5 pax</div>
-                </div>
-                <div class="text-right">
-                  <div class="font-bold text-slate-900">$8.20 / ración</div>
-                  <div class="text-xs text-emerald-600 font-semibold">Margen: 65%</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ SCREEN: PROVEEDORES ═══════════════════════════════════ -->
-    <div id="screen-proveedores" class="screen flex-col space-y-6">
-      <div>
-        <h2 class="text-2xl font-bold text-slate-900" style="font-family:Outfit">Proveedores</h2>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="premium-card p-6 flex flex-col justify-between">
+      <!-- Right panel: tips + history -->
+      <div class="space-y-5 lg:col-span-2">
+        <div class="card p-6">
+          <h3 class="font-bold text-slate-900 mb-4" style="font-family:Outfit">Capacidades del Asistente</h3>
           <div class="space-y-3">
-            <div class="flex justify-between items-start">
-              <span class="px-2.5 py-0.5 bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase rounded border border-indigo-100">Frescos</span>
-              <span class="text-xs text-emerald-600 font-semibold flex items-center"><span class="w-2 h-2 bg-emerald-500 rounded-full mr-1.5"></span>Activo</span>
+            <div class="flex gap-3 text-sm">
+              <span class="material-symbols-outlined text-brand mt-0.5" style="font-size:18px">check_circle</span>
+              <span class="text-slate-600">Extracción automática de ingredientes, cantidades y unidades</span>
             </div>
-            <h3 class="text-lg font-bold text-slate-900">Mercabarna Dist. S.L.</h3>
-            <p class="text-sm text-slate-500">Principal proveedor de carnes de alta gama (Wagyu, ternera gallega) y verduras selectas.</p>
-            <div class="text-xs text-slate-500 space-y-1 pt-2">
-              <div><strong>Contacto:</strong> pedidos@mercabarnadist.com</div>
-              <div><strong>Condiciones:</strong> Pago a 30 días, entrega diaria</div>
+            <div class="flex gap-3 text-sm">
+              <span class="material-symbols-outlined text-brand mt-0.5" style="font-size:18px">check_circle</span>
+              <span class="text-slate-600">Cálculo de coste por ración basado en precios del inventario</span>
+            </div>
+            <div class="flex gap-3 text-sm">
+              <span class="material-symbols-outlined text-brand mt-0.5" style="font-size:18px">check_circle</span>
+              <span class="text-slate-600">Sugerencia de precio de venta con margen óptimo</span>
+            </div>
+            <div class="flex gap-3 text-sm">
+              <span class="material-symbols-outlined text-success mt-0.5" style="font-size:18px">check_circle</span>
+              <span class="text-slate-600">Generación de ficha escandallo en PDF</span>
+            </div>
+            <div class="flex gap-3 text-sm">
+              <span class="material-symbols-outlined text-slate-300 mt-0.5" style="font-size:18px">radio_button_unchecked</span>
+              <span class="text-slate-400">Alergenos automáticos (próximamente)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <h3 class="font-bold text-slate-900 mb-4" style="font-family:Outfit">Procesos Recientes</h3>
+          <div class="space-y-3" id="ai-history">
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-slate-400" style="font-size:16px">receipt_long</span>
+              </div>
+              <div class="min-w-0">
+                <p class="font-medium text-slate-700 truncate">Risotto de Setas</p>
+                <p class="text-xs text-slate-400">hace 2 horas · 8 ingredientes</p>
+              </div>
+              <span class="badge badge-green ml-auto flex-shrink-0">OK</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-slate-400" style="font-size:16px">receipt_long</span>
+              </div>
+              <div class="min-w-0">
+                <p class="font-medium text-slate-700 truncate">Salmón a la Plancha</p>
+                <p class="text-xs text-slate-400">ayer · 5 ingredientes</p>
+              </div>
+              <span class="badge badge-green ml-auto flex-shrink-0">OK</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+              <div class="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-slate-400" style="font-size:16px">receipt_long</span>
+              </div>
+              <div class="min-w-0">
+                <p class="font-medium text-slate-700 truncate">Crema de Calabaza</p>
+                <p class="text-xs text-slate-400">hace 3 días · 6 ingredientes</p>
+              </div>
+              <span class="badge badge-amber ml-auto flex-shrink-0">Revisión</span>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- ═══ SCREEN: AI ASSISTANT ═══════════════════════════════════ -->
-    <div id="screen-recipes" class="screen flex-col space-y-8">
-      <div>
-        <h2 class="text-2xl font-bold text-slate-900" style="font-family:Outfit">Asistente IA</h2>
+</main>
+
+<!-- ── FOOTER ────────────────────────────────────────────────────── -->
+<footer class="mt-12 border-t border-slate-200 bg-white">
+  <div class="max-w-screen-xl mx-auto px-4 sm:px-6 py-6 flex flex-wrap justify-between items-center gap-4 text-xs text-slate-400">
+    <div class="flex items-center gap-2">
+      <div class="w-6 h-6 rounded-lg bg-brand-muted flex items-center justify-center">
+        <span class="material-symbols-outlined text-brand" style="font-size:14px">restaurant</span>
       </div>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="premium-card p-6 space-y-4">
-          <h3 class="text-lg font-bold text-slate-900">Entrada NLP</h3>
-          <textarea rows="5" placeholder="Pega el texto aquí..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:border-indigo-500 outline-none transition-all resize-none"></textarea>
-          <button class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2">Procesar Receta</button>
+      <span class="font-semibold text-slate-600">ACFC Kitchen</span>
+      <span>— Gastronomic SaaS Platform v2.0</span>
+    </div>
+    <div class="flex gap-4">
+      <a href="#" class="hover:text-brand transition-colors">Privacidad</a>
+      <a href="#" class="hover:text-brand transition-colors">Términos</a>
+      <a href="#" class="hover:text-brand transition-colors">Soporte</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ── SCRIPTS ────────────────────────────────────────────────────── -->
+<script>
+// ── DATA ──────────────────────────────────────────────────────────
+const SCREENS = ['dashboard','inventory','recetas','proveedores','planner','recipes'];
+
+const INVENTORY = [
+  { name:'Wagyu Beef A5',         cat:'Carnicería', stock:2.5,  unit:'kg', min:10,  cost:125.00, supplier:'Mercabarna', critical:true  },
+  { name:'Arroz Koshihikari',     cat:'Asiático',   stock:45,   unit:'kg', min:15,  cost:4.50,   supplier:'Asia Market', critical:false },
+  { name:'Aceite de Trufa Negra', cat:'Despensa',   stock:1.2,  unit:'L',  min:1.0, cost:85.00,  supplier:'Trufas El Maestro', critical:false },
+  { name:'Pulpo Patagónico',      cat:'Congelados', stock:4.0,  unit:'kg', min:12,  cost:32.00,  supplier:'Pescados Atlántico', critical:true  },
+  { name:'Burrata Pugliese',      cat:'Lácteos',    stock:12,   unit:'ud', min:20,  cost:5.50,   supplier:'Latteria Italiana', critical:true  },
+  { name:'Foie Gras Mi-Cuit',     cat:'Frescos',    stock:3.0,  unit:'kg', min:2.0, cost:98.00,  supplier:'Maison Rivière', critical:false },
+  { name:'Parmigiano Reggiano',   cat:'Lácteos',    stock:8.0,  unit:'kg', min:5.0, cost:22.00,  supplier:'Latteria Italiana', critical:false },
+  { name:'Quinoa Real Boliviana', cat:'Despensa',   stock:30,   unit:'kg', min:10,  cost:8.90,   supplier:'Bio Natura', critical:false },
+  { name:'Vieiras San Jacobo',    cat:'Frescos',    stock:1.5,  unit:'kg', min:5.0, cost:48.00,  supplier:'Pescados Atlántico', critical:true  },
+  { name:'Espárragos Trigueros',  cat:'Frescos',    stock:18,   unit:'kg', min:8.0, cost:6.20,   supplier:'Mercabarna', critical:false },
+  { name:'Chocolate Valrhona',    cat:'Despensa',   stock:5.0,  unit:'kg', min:3.0, cost:38.00,  supplier:'Pastelería Pro', critical:false },
+  { name:'Ternera Gallega DO',    cat:'Carnicería', stock:0.8,  unit:'kg', min:8.0, cost:55.00,  supplier:'Mercabarna', critical:true  },
+];
+
+const RECIPES = [
+  {
+    name:'Risotto de Setas Silvestres',
+    family:'Arroces', portions:10,
+    cost_per:3.85, price:14.00, margin:72,
+    ingredients:[
+      { name:'Arroz Koshihikari', qty:'1 kg', cost:'4.50€' },
+      { name:'Setas Boletus',     qty:'400g', cost:'12.00€' },
+      { name:'Parmigiano Reggiano', qty:'150g', cost:'3.30€' },
+      { name:'Vino Blanco',       qty:'200ml', cost:'0.80€' },
+      { name:'Caldo de Verduras', qty:'2L',    cost:'1.50€' },
+      { name:'Mantequilla',       qty:'80g',   cost:'0.60€' },
+      { name:'Cebolla',           qty:'200g',  cost:'0.30€' },
+      { name:'Aceite AOVE',       qty:'50ml',  cost:'0.50€' },
+    ],
+    total_cost: 38.50,
+    notes:'Cocción al dente 18 min. Mantecado fuera del fuego.'
+  },
+  {
+    name:'Salmón a la Plancha con Beurre Blanc',
+    family:'Pescados', portions:6,
+    cost_per:9.20, price:32.00, margin:71,
+    ingredients:[
+      { name:'Salmón Noruega',  qty:'1.5 kg', cost:'38.00€' },
+      { name:'Mantequilla',     qty:'150g',   cost:'1.10€' },
+      { name:'Chalota',         qty:'100g',   cost:'0.60€' },
+      { name:'Vino Blanco',     qty:'150ml',  cost:'0.60€' },
+      { name:'Nata líquida',    qty:'100ml',  cost:'0.80€' },
+      { name:'Limón',           qty:'2 ud',   cost:'0.50€' },
+    ],
+    total_cost: 55.20,
+    notes:'Marinado 30 min con sal, AOVE y eneldo. Plancha a 200°C.'
+  },
+  {
+    name:'Steak Wagyu A5 con Salsa Teriyaki',
+    family:'Carnes', portions:4,
+    cost_per:38.50, price:115.00, margin:67,
+    ingredients:[
+      { name:'Wagyu Beef A5',    qty:'1 kg',   cost:'125.00€' },
+      { name:'Salsa Soja',       qty:'100ml',  cost:'1.20€' },
+      { name:'Sake',             qty:'80ml',   cost:'2.00€' },
+      { name:'Mirin',            qty:'80ml',   cost:'1.50€' },
+      { name:'Jengibre fresco',  qty:'30g',    cost:'0.60€' },
+      { name:'Aceite de sésamo', qty:'20ml',   cost:'0.80€' },
+      { name:'Flor de sal',      qty:'5g',     cost:'0.50€' },
+    ],
+    total_cost: 154.00,
+    notes:'Temperado 45 min antes. Plancha de hierro fundido máxima temperatura. Reposo 5 min.'
+  },
+  {
+    name:'Crema de Calabaza con Foie',
+    family:'Entrantes', portions:8,
+    cost_per:6.30, price:18.00, margin:65,
+    ingredients:[
+      { name:'Calabaza',         qty:'2 kg',   cost:'4.80€' },
+      { name:'Foie Gras Mi-Cuit',qty:'200g',   cost:'19.60€' },
+      { name:'Caldo de Pollo',   qty:'1.5L',   cost:'2.00€' },
+      { name:'Nata 35%',         qty:'200ml',  cost:'1.60€' },
+      { name:'Cebolla',          qty:'300g',   cost:'0.45€' },
+      { name:'Jengibre',         qty:'20g',    cost:'0.40€' },
+      { name:'Aceite AOVE',      qty:'30ml',   cost:'0.30€' },
+    ],
+    total_cost: 50.40,
+    notes:'Turmix tras cocción 30 min. Servir con lámina de foie a temperatura ambiente.'
+  },
+];
+
+const SUPPLIERS = [
+  {
+    name:'Mercabarna Dist. S.L.',
+    category:'Frescos · Carnicería',
+    status:'active',
+    contact:'pedidos@mercabarnadist.com',
+    phone:'+34 93 123 45 67',
+    payment:'Pago a 30 días',
+    delivery:'Diaria (lun–sáb)',
+    rating:4.8, orders:42,
+    highlight:'Principal proveedor de carnes premium (Wagyu A5, ternera gallega DO) y verduras selectas de temporada.'
+  },
+  {
+    name:'Pescados del Atlántico',
+    category:'Pescados · Mariscos',
+    status:'active',
+    contact:'frescos@atlantico.es',
+    phone:'+34 986 234 567',
+    payment:'Pago a 15 días',
+    delivery:'Diaria (entrega antes de las 6:00h)',
+    rating:4.6, orders:28,
+    highlight:'Lonja propia en Vigo. Garantía de pesca del día. Especialistas en pulpo, vieiras y percebes.'
+  },
+  {
+    name:'Asia Market BCN',
+    category:'Asiático · Especias',
+    status:'active',
+    contact:'wholesale@asiamarket.es',
+    phone:'+34 93 456 78 90',
+    payment:'Pago a 60 días',
+    delivery:'2 veces por semana',
+    rating:4.3, orders:15,
+    highlight:'Único distribuidor autorizado de Arroz Koshihikari en España. Amplio catálogo de salsas y especias asiáticas.'
+  },
+  {
+    name:'Latteria Italiana S.r.l.',
+    category:'Lácteos · Quesos',
+    status:'active',
+    contact:'export@latteria-it.com',
+    phone:'+39 02 456 7890',
+    payment:'Pago a 30 días',
+    delivery:'Semanal (miércoles)',
+    rating:4.9, orders:33,
+    highlight:'Importación directa desde Puglia. Burrata artesana, Parmigiano Reggiano DOP y Grana Padano.'
+  },
+  {
+    name:'Maison Rivière',
+    category:'Foie · Alta Gama',
+    status:'active',
+    contact:'export@maisonriviere.fr',
+    phone:'+33 5 56 789 012',
+    payment:'Pago a 45 días',
+    delivery:'Semanal (viernes)',
+    rating:4.7, orders:11,
+    highlight:'Productor de foie gras mi-cuit y entier de Las Landas (Francia). Producto exclusivo para restauración premium.'
+  },
+  {
+    name:'Bio Natura Direct',
+    category:'Ecológico · Cereales',
+    status:'review',
+    contact:'info@bionatura.es',
+    phone:'+34 93 999 11 22',
+    payment:'Pago a 15 días',
+    delivery:'Quincenal',
+    rating:3.9, orders:7,
+    highlight:'Quinoa real, amaranto y pseudocereales ecológicos certificados. En proceso de auditoría de calidad.'
+  },
+  {
+    name:'Trufas El Maestro',
+    category:'Trufas · Aceites',
+    status:'active',
+    contact:'pedidos@trufasmaestro.com',
+    phone:'+34 976 123 456',
+    payment:'Pago contado',
+    delivery:'Bajo pedido (48h)',
+    rating:5.0, orders:6,
+    highlight:'Único proveedor homologado de trufa negra Tuber melanosporum de Soria. Aceite de trufa auténtico sin aromas artificiales.'
+  },
+];
+
+const ACTIVITIES = [
+  { icon:'inventory_2', color:'brand',   text:'12 unidades de Arroz Koshihikari actualizadas',   time:'hace 5 min'  },
+  { icon:'receipt_long',color:'success', text:'Nuevo escandallo creado: Crema de Calabaza',       time:'hace 42 min' },
+  { icon:'warning',     color:'danger',  text:'Stock crítico: Ternera Gallega (0.8 kg restantes)', time:'hace 1h'     },
+  { icon:'local_shipping',color:'warn',  text:'Pedido confirmado a Pescados del Atlántico',       time:'hace 2h'     },
+  { icon:'auto_awesome',color:'brand',   text:'IA procesó: Risotto de Setas — 8 ingredientes',   time:'hace 3h'     },
+];
+
+const ALERTS = [
+  { icon:'warning', color:'danger', title:'Stock crítico — Ternera Gallega', desc:'0.8 kg en stock. Mínimo requerido: 8 kg', action:'Pedir ahora' },
+  { icon:'warning', color:'danger', title:'Stock crítico — Wagyu Beef A5',   desc:'2.5 kg en stock. Mínimo requerido: 10 kg', action:'Pedir ahora' },
+  { icon:'info',    color:'warn',   title:'Presupuesto al 75%',              desc:'Queda 6.1K€ del límite mensual (24.5K€)', action:'Ver detalle' },
+];
+
+const MENU_DATA = {
+  1: { almuerzo:'Risotto de Setas', cena:'Salmón Plancha',     cost:'€€€' },
+  2: { almuerzo:'Crema Calabaza',   cena:'Wagyu A5',           cost:'€€€€' },
+  7: { almuerzo:'Penne Arrabiata',  cena:'Ensalada César',     cost:'€€' },
+  8: { almuerzo:'Steak Wagyu',      cena:'Crema Calabaza',     cost:'€€€' },
+  14:{ almuerzo:'Pulpo a la Brasa', cena:'Burrata con Tomate', cost:'€€€' },
+  15:{ almuerzo:'Arroz Negro',      cena:'Vieiras Plancha',    cost:'€€€' },
+  21:{ almuerzo:'Cochinillo',       cena:'Sopa de Trufa',      cost:'€€€€' },
+  22:{ almuerzo:'Merluza en Salsa', cena:'Foie Mi-Cuit',       cost:'€€€' },
+  28:{ almuerzo:'Paella Valenciana',cena:'Gambas al Ajillo',   cost:'€€€' },
+};
+
+// ── NAV ────────────────────────────────────────────────────────────
+function showScreen(id) {
+  SCREENS.forEach(s => {
+    document.getElementById('screen-' + s)?.classList.remove('active');
+    document.getElementById('nav-' + s)?.classList.remove('active');
+    document.getElementById('mnav-' + s)?.classList.remove('active');
+  });
+  document.getElementById('screen-' + id)?.classList.add('active');
+  document.getElementById('nav-' + id)?.classList.add('active');
+  document.getElementById('mnav-' + id)?.classList.add('active');
+  document.getElementById('mobile-nav')?.classList.add('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleMobileNav() {
+  document.getElementById('mobile-nav').classList.toggle('hidden');
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────
+function openNewModal() {
+  document.getElementById('modal-new').classList.add('open');
+}
+function closeNewModal() {
+  document.getElementById('modal-new').classList.remove('open');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────
+function toast(msg, duration=3000) {
+  const root = document.getElementById('toast-root');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = msg;
+  root.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, duration);
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────
+function initDashboard() {
+  // Date
+  const now = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  const el = document.getElementById('dash-date');
+  if (el) el.textContent = now.toLocaleDateString('es-ES', opts);
+
+  // Activity
+  const al = document.getElementById('activity-list');
+  if (al) {
+    al.innerHTML = ACTIVITIES.map(a => `
+      <div class="flex items-start gap-3">
+        <div class="w-8 h-8 rounded-lg bg-${a.color === 'brand' ? 'brand-muted' : a.color === 'success' ? 'emerald-50' : a.color === 'danger' ? 'red-50' : 'amber-50'} flex items-center justify-center flex-shrink-0 mt-0.5">
+          <span class="material-symbols-outlined text-${a.color === 'brand' ? 'brand' : a.color === 'success' ? 'success' : a.color === 'danger' ? 'red-500' : 'warn'}" style="font-size:16px">${a.icon}</span>
+        </div>
+        <div class="min-w-0 flex-grow">
+          <p class="text-sm text-slate-700">${a.text}</p>
+          <p class="text-xs text-slate-400 mt-0.5">${a.time}</p>
         </div>
       </div>
-    </div>
+    `).join('');
+  }
 
-  </main>
+  // Alerts
+  const alertEl = document.getElementById('alert-list');
+  if (alertEl) {
+    alertEl.innerHTML = ALERTS.map(a => `
+      <div class="flex items-start gap-3 p-3 rounded-xl ${a.color === 'danger' ? 'bg-red-50 border border-red-100' : 'bg-amber-50 border border-amber-100'}">
+        <span class="material-symbols-outlined ${a.color === 'danger' ? 'text-red-500' : 'text-warn'} flex-shrink-0 mt-0.5" style="font-size:18px">${a.icon}</span>
+        <div class="flex-grow min-w-0">
+          <p class="text-sm font-semibold ${a.color === 'danger' ? 'text-red-700' : 'text-amber-800'}">${a.title}</p>
+          <p class="text-xs ${a.color === 'danger' ? 'text-red-500' : 'text-amber-600'} mt-0.5">${a.desc}</p>
+        </div>
+        <button onclick="toast('🔄 Procesando pedido...')" class="text-xs font-semibold ${a.color === 'danger' ? 'text-red-600 hover:text-red-800' : 'text-amber-700 hover:text-amber-900'} whitespace-nowrap mt-0.5 transition-colors">${a.action}</button>
+      </div>
+    `).join('');
+  }
+}
 
-  <script>
-    // Navigation
-    const screens = ['dashboard', 'planner', 'inventory', 'recetas', 'proveedores', 'recipes'];
+// ── INVENTORY ─────────────────────────────────────────────────────
+function stockPct(item) { return Math.min(100, Math.round((item.stock / (item.min * 1.5)) * 100)); }
 
-    function toggleMobileMenu() {
-      const menu = document.getElementById('mobile-menu');
-      menu.classList.toggle('hidden');
-    }
+function renderInventory(items) {
+  const tbody = document.getElementById('inv-tbody');
+  const count = document.getElementById('inv-count');
+  if (!tbody) return;
+  count.textContent = `${items.length} de ${INVENTORY.length} líneas`;
+  if (!items.length) { tbody.innerHTML = `<tr><td colspan="8" class="p-10 text-center text-slate-400 text-sm">Sin resultados para los filtros seleccionados.</td></tr>`; return; }
 
-    function showScreen(id) {
-      screens.forEach(s => {
-        const scr = document.getElementById('screen-' + s);
-        if (scr) scr.classList.remove('active');
-        const link = document.getElementById('nav-' + s);
-        if (link) link.classList.remove('active');
-        const mobLink = document.getElementById('mobile-nav-' + s);
-        if (mobLink) mobLink.classList.remove('active');
-      });
+  tbody.innerHTML = items.map(item => {
+    const pct = stockPct(item);
+    const barColor = item.critical ? '#ef4444' : pct < 70 ? '#d97706' : '#059669';
+    const statusBadge = item.critical
+      ? `<span class="badge badge-red pulse-red">REORDER</span>`
+      : `<span class="badge badge-green">Óptimo</span>`;
+    return `
+      <tr class="tr-hover cursor-pointer" onclick="toast('✏️ Edición de ${item.name} próximamente')">
+        <td class="px-6 py-4">
+          <p class="font-semibold text-slate-900">${item.name}</p>
+        </td>
+        <td class="px-4 py-4"><span class="badge badge-slate">${item.cat}</span></td>
+        <td class="px-4 py-4 font-semibold ${item.critical ? 'text-red-600' : 'text-slate-900'}">${item.stock} ${item.unit}</td>
+        <td class="px-4 py-4 hidden md:table-cell" style="min-width:120px">
+          <div class="prog-track w-24"><div class="prog-fill" style="width:${pct}%;background:${barColor}"></div></div>
+          <p class="text-[10px] text-slate-400 mt-1">min: ${item.min} ${item.unit}</p>
+        </td>
+        <td class="px-4 py-4 font-semibold text-slate-700 hidden sm:table-cell">${item.cost.toFixed(2)}€</td>
+        <td class="px-4 py-4 text-slate-500 text-xs hidden lg:table-cell">${item.supplier}</td>
+        <td class="px-4 py-4">${statusBadge}</td>
+        <td class="px-4 py-4">
+          <button onclick="event.stopPropagation();toast('✏️ Editando ${item.name}...')" class="p-1.5 rounded-lg text-slate-400 hover:text-brand hover:bg-brand-muted transition-colors">
+            <span class="material-symbols-outlined" style="font-size:16px">edit</span>
+          </button>
+        </td>
+      </tr>`;
+  }).join('');
+}
 
-      const activeScr = document.getElementById('screen-' + id);
-      if (activeScr) activeScr.classList.add('active');
-      const activeLink = document.getElementById('nav-' + id);
-      if (activeLink) activeLink.classList.add('active');
-      const activeMobLink = document.getElementById('mobile-nav-' + id);
-      if (activeMobLink) activeMobLink.classList.add('active');
+function filterInventory() {
+  const q = document.getElementById('inv-search').value.toLowerCase();
+  const cat = document.getElementById('inv-cat').value;
+  const price = document.getElementById('inv-price').value;
+  const status = document.getElementById('inv-status').value;
+  const filtered = INVENTORY.filter(i => {
+    if (q && !i.name.toLowerCase().includes(q)) return false;
+    if (cat && i.cat !== cat) return false;
+    if (price === 'low' && i.cost >= 10) return false;
+    if (price === 'mid' && (i.cost < 10 || i.cost > 50)) return false;
+    if (price === 'high' && i.cost <= 50) return false;
+    if (status === 'critical' && !i.critical) return false;
+    if (status === 'ok' && i.critical) return false;
+    return true;
+  });
+  renderInventory(filtered);
+}
 
-      const mobileMenu = document.getElementById('mobile-menu');
-      if (mobileMenu) mobileMenu.classList.add('hidden');
-    }
+// ── RECIPES ───────────────────────────────────────────────────────
+function toggleRecipe(id) {
+  const el = document.getElementById('recipe-detail-' + id);
+  if (!el) return;
+  el.classList.toggle('open');
+  const btn = document.getElementById('recipe-toggle-' + id);
+  if (btn) btn.textContent = el.classList.contains('open') ? 'expand_less' : 'expand_more';
+}
 
-    // Modal
-    function openModal() {
-      const modal = document.getElementById('new-register-modal');
-      modal.classList.remove('hidden');
-      setTimeout(() => {
-        modal.classList.remove('opacity-0');
-        modal.firstElementChild.classList.remove('scale-95');
-      }, 50);
-    }
+function renderRecipes() {
+  const el = document.getElementById('recipe-list');
+  if (!el) return;
+  el.innerHTML = RECIPES.map((r, i) => {
+    const marginColor = r.margin >= 70 ? 'success' : r.margin >= 60 ? 'warn' : 'danger';
+    const marginBadge = r.margin >= 70 ? 'badge-green' : r.margin >= 60 ? 'badge-amber' : 'badge-red';
+    return `
+      <div class="card overflow-hidden">
+        <div class="px-6 py-5 flex flex-wrap justify-between items-start gap-4 cursor-pointer" onclick="toggleRecipe(${i})">
+          <div class="flex items-center gap-4">
+            <div class="kpi-icon bg-brand-muted"><span class="material-symbols-outlined text-brand" style="font-size:22px">restaurant_menu</span></div>
+            <div>
+              <h3 class="font-bold text-slate-900" style="font-family:Outfit">${r.name}</h3>
+              <p class="text-xs text-slate-400 mt-0.5"><span class="badge badge-slate mr-2">${r.family}</span>${r.portions} pax · Coste total: ${r.total_cost.toFixed(2)}€</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="text-right">
+              <p class="text-xl font-bold text-slate-900" style="font-family:Outfit">${r.cost_per.toFixed(2)}€</p>
+              <p class="text-xs text-slate-400">por ración</p>
+            </div>
+            <div class="text-right">
+              <p class="text-xl font-bold text-${marginColor}" style="font-family:Outfit">${r.margin}%</p>
+              <p class="text-xs text-slate-400">margen</p>
+            </div>
+            <div class="text-right hidden sm:block">
+              <p class="text-xl font-bold text-slate-900" style="font-family:Outfit">${r.price.toFixed(2)}€</p>
+              <p class="text-xs text-slate-400">precio venta</p>
+            </div>
+            <button id="recipe-toggle-${i}" class="p-2 rounded-xl text-slate-400 hover:text-brand hover:bg-brand-muted transition-colors ml-2">
+              <span class="material-symbols-outlined" style="font-size:22px">expand_more</span>
+            </button>
+          </div>
+        </div>
+        <div id="recipe-detail-${i}" class="recipe-detail">
+          <div class="px-6 pb-6 border-t border-slate-100 pt-5">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <!-- Ingredients table -->
+              <div class="lg:col-span-2">
+                <h4 class="text-sm font-bold text-slate-700 mb-3">Desglose de ingredientes</h4>
+                <table class="w-full text-sm">
+                  <thead><tr class="text-xs text-slate-400 uppercase border-b border-slate-100">
+                    <th class="pb-2 text-left font-semibold">Ingrediente</th>
+                    <th class="pb-2 text-right font-semibold">Cantidad</th>
+                    <th class="pb-2 text-right font-semibold">Coste</th>
+                  </tr></thead>
+                  <tbody class="divide-y divide-slate-50">
+                    ${r.ingredients.map(ing => `
+                      <tr class="text-slate-700">
+                        <td class="py-2.5">${ing.name}</td>
+                        <td class="py-2.5 text-right text-slate-500">${ing.qty}</td>
+                        <td class="py-2.5 text-right font-semibold">${ing.cost}</td>
+                      </tr>`).join('')}
+                    <tr class="border-t border-slate-200 font-bold text-slate-900">
+                      <td class="pt-3">Total (${r.portions} pax)</td>
+                      <td></td>
+                      <td class="pt-3 text-right">${r.total_cost.toFixed(2)}€</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- Notes + actions -->
+              <div class="space-y-4">
+                <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                  <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Notas técnicas</p>
+                  <p class="text-sm text-slate-600 leading-relaxed">${r.notes}</p>
+                </div>
+                <div class="bg-brand-muted rounded-xl p-4 border border-brand/10">
+                  <div class="flex justify-between text-sm mb-1"><span class="text-slate-600">Margen objetivo ≥65%</span><span class="font-bold text-brand">${r.margin >= 65 ? '✓ Cumple' : '✗ Revisar'}</span></div>
+                  <div class="prog-track"><div class="prog-fill bg-brand" style="width:${r.margin}%"></div></div>
+                </div>
+                <div class="flex gap-2">
+                  <button onclick="toast('📄 Generando PDF del escandallo...')" class="flex-1 flex items-center justify-center gap-1.5 py-2 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+                    <span class="material-symbols-outlined" style="font-size:16px">picture_as_pdf</span>PDF
+                  </button>
+                  <button onclick="toast('✏️ Editando receta...')" class="flex-1 flex items-center justify-center gap-1.5 py-2 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-brand-dark transition-colors">
+                    <span class="material-symbols-outlined" style="font-size:16px">edit</span>Editar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
 
-    function closeModal() {
-      const modal = document.getElementById('new-register-modal');
-      modal.classList.add('opacity-0');
-      modal.firstElementChild.classList.add('scale-95');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-      }, 300);
-    }
+// ── SUPPLIERS ─────────────────────────────────────────────────────
+function renderSuppliers(list) {
+  const el = document.getElementById('supplier-grid');
+  if (!el) return;
+  el.innerHTML = list.map((s, i) => {
+    const isActive = s.status === 'active';
+    const stars = '★'.repeat(Math.floor(s.rating)) + (s.rating % 1 >= 0.5 ? '½' : '');
+    return `
+      <div class="card p-6 flex flex-col gap-4 ${isActive ? 'supplier-active' : 'border-l-4 border-l-amber-400'} hover:-translate-y-0.5 transition-transform cursor-pointer">
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="badge ${isActive ? 'badge-slate' : 'badge-amber'} mb-2">${s.category}</span>
+            <h3 class="font-bold text-slate-900 text-base" style="font-family:Outfit">${s.name}</h3>
+          </div>
+          <span class="badge ${isActive ? 'badge-green' : 'badge-amber'}">${isActive ? 'Activo' : 'Revisión'}</span>
+        </div>
+        <p class="text-sm text-slate-500 leading-relaxed flex-grow">${s.highlight}</p>
+        <div class="grid grid-cols-2 gap-2 text-xs text-slate-500 bg-slate-50 rounded-xl p-3 border border-slate-100">
+          <div><span class="font-semibold text-slate-700 block">Pago</span>${s.payment}</div>
+          <div><span class="font-semibold text-slate-700 block">Entrega</span>${s.delivery}</div>
+          <div><span class="font-semibold text-slate-700 block">Pedidos</span>${s.orders} realizados</div>
+          <div><span class="font-semibold text-slate-700 block">Valoración</span><span class="text-warn">${stars}</span> ${s.rating}</div>
+        </div>
+        <div class="flex justify-between items-center">
+          <div class="text-xs text-slate-400">
+            <span class="material-symbols-outlined align-middle text-brand" style="font-size:14px">mail</span>
+            <span class="ml-1">${s.contact}</span>
+          </div>
+          <div class="flex gap-1.5">
+            <button onclick="toast('📞 Llamando a ${s.name}...')" class="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-brand hover:border-brand transition-colors">
+              <span class="material-symbols-outlined" style="font-size:16px">call</span>
+            </button>
+            <button onclick="toast('📋 Generando pedido a ${s.name}...')" class="px-3 py-1.5 rounded-lg bg-brand text-white text-xs font-semibold hover:bg-brand-dark transition-colors">
+              Pedir
+            </button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
 
-    // Render Calendar
-    const menuData = {
-      1:  { almuerzo: 'Mushroom Risotto',   cena: 'Grilled Salmon',  cost: '$$' },
-      5:  { almuerzo: 'Penne Arrabiata',    cena: 'Ensalada Verde',  cost: '$' }
-    };
-    const grid = document.getElementById('cal-grid');
-    if (grid) {
-      for (let d = 1; d <= 31; d++) {
-        const cell = document.createElement('div');
-        const isToday = d === 1;
-        cell.className = `glass-day rounded-xl p-3 flex flex-col min-h-[120px] ${isToday ? 'current-day' : ''} cursor-pointer`;
-        let inner = `<div class="text-right text-xs font-semibold ${isToday?'text-indigo-600':''} mb-1">${d}</div>`;
-        if (menuData[d]) {
-          const { almuerzo, cena, cost } = menuData[d];
-          inner += `<div class="flex-grow flex flex-col justify-end"><span class="text-xs font-semibold text-slate-800 truncate">${almuerzo}</span></div>`;
-        }
-        cell.innerHTML = inner;
-        grid.appendChild(cell);
+function filterSuppliers() {
+  const q = document.getElementById('supp-search')?.value.toLowerCase() || '';
+  const filtered = SUPPLIERS.filter(s => !q || s.name.toLowerCase().includes(q) || s.category.toLowerCase().includes(q));
+  renderSuppliers(filtered);
+}
+
+// ── CALENDAR ──────────────────────────────────────────────────────
+function renderCalendar() {
+  const grid = document.getElementById('cal-grid');
+  if (!grid) return;
+  const today = new Date().getDate();
+  // July 2026 starts on Wednesday (offset 2 for Mon-based)
+  const offset = 1; // Tue 1 July → Mon=0, Tue=1
+  let html = '';
+  for (let i = 0; i < offset; i++) html += `<div></div>`;
+  for (let d = 1; d <= 31; d++) {
+    const isToday = d === today;
+    const menu = MENU_DATA[d];
+    const hasMenu = !!menu;
+    html += `
+      <div class="cal-day ${isToday ? 'today' : ''} ${hasMenu && !isToday ? 'has-menu' : ''}"
+           onclick="toast('📅 Día ${d}: ${menu ? menu.almuerzo + ' / ' + menu.cena : 'Sin menú planificado'}')">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-xs font-bold ${isToday ? 'text-brand bg-brand text-white rounded-full w-5 h-5 flex items-center justify-center' : 'text-slate-400'}">${d}</span>
+          ${menu ? `<span class="text-[9px] font-bold text-slate-400">${menu.cost}</span>` : ''}
+        </div>
+        ${menu ? `
+          <div class="flex-grow flex flex-col justify-end gap-1 mt-1">
+            <p class="text-[10px] font-semibold text-brand leading-tight truncate" title="${menu.almuerzo}">🌞 ${menu.almuerzo}</p>
+            <p class="text-[10px] text-slate-500 leading-tight truncate" title="${menu.cena}">🌙 ${menu.cena}</p>
+          </div>` : `
+          <div class="flex-grow flex items-end justify-center pb-1">
+            <span class="text-[9px] text-slate-200">+ Añadir</span>
+          </div>`}
+      </div>`;
+  }
+  grid.innerHTML = html;
+}
+
+// ── AI ASSISTANT ──────────────────────────────────────────────────
+function processAI() {
+  const input = document.getElementById('ai-input');
+  const text = input.value.trim();
+  if (!text) { toast('⚠️ Escribe o pega el texto de una receta primero'); return; }
+
+  const msgs = document.getElementById('chat-messages');
+
+  // User bubble
+  msgs.innerHTML += `
+    <div class="flex justify-end">
+      <div class="chat-bubble chat-user">${text.length > 200 ? text.substring(0,200)+'...' : text}</div>
+    </div>`;
+
+  // Simulated response
+  const ingredients = extractIngredients(text);
+  setTimeout(() => {
+    msgs.innerHTML += `
+      <div class="flex gap-3">
+        <div class="w-8 h-8 rounded-xl bg-brand-muted flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-brand" style="font-size:18px">auto_awesome</span>
+        </div>
+        <div class="chat-bubble chat-ai">
+          <p class="font-semibold text-slate-900 mb-2">✅ Ingredientes extraídos (${ingredients.length} detectados):</p>
+          <ul class="space-y-1 mb-3">
+            ${ingredients.map(i => `<li class="text-sm flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-brand inline-block flex-shrink-0"></span>${i}</li>`).join('')}
+          </ul>
+          <p class="text-xs text-slate-400 border-t border-slate-100 pt-2 mt-2">Coste estimado calculado contra inventario activo. Revisa el escandallo en la sección Recetas.</p>
+          <button onclick="showScreen('recetas');toast('📋 Escandallo generado correctamente')" class="mt-3 flex items-center gap-1.5 px-4 py-2 bg-brand text-white rounded-lg text-xs font-semibold hover:bg-brand-dark transition-colors">
+            <span class="material-symbols-outlined" style="font-size:14px">receipt_long</span>Ver escandallo generado
+          </button>
+        </div>
+      </div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 1200);
+
+  input.value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+  toast('🤖 Procesando con IA...');
+}
+
+function extractIngredients(text) {
+  const units = ['kg', 'g', 'l', 'ml', 'ud', 'unidad', 'unidades', 'taza', 'cucharada', 'cucharadita', 'litro', 'litros'];
+  const words = text.toLowerCase().split(/\s+/);
+  const found = [];
+  const seen = new Set();
+  for (let i = 0; i < words.length - 1; i++) {
+    const isNum = /^\d+([.,]\d+)?$/.test(words[i]);
+    const isUnit = units.some(u => words[i+1]?.includes(u));
+    if (isNum && i + 2 < words.length) {
+      const ingredient = words.slice(i+1, Math.min(i+4, words.length)).join(' ')
+        .replace(/[,.:;]/g,'').trim();
+      if (!seen.has(ingredient) && ingredient.length > 2) {
+        found.push(`${words[i]} ${ingredient}`);
+        seen.add(ingredient);
       }
     }
+  }
+  if (found.length === 0) {
+    return ['Ingrediente A (cantidad detectada)', 'Ingrediente B (cantidad detectada)', 'Ingrediente C (cantidad detectada)'];
+  }
+  return found.slice(0, 10);
+}
 
-    // Inventory & Filtering
-    const inventoryItems = [
-      { name: 'Wagyu Beef A5', cat: 'Frescos', stock: 2.5, unit: 'kg', min: 10, cost: 125.00, critical: true },
-      { name: 'Arroz Koshihikari', cat: 'Asiático', stock: 45, unit: 'kg', min: 15, cost: 4.50, critical: false },
-      { name: 'Aceite de Trufa Negra', cat: 'Despensa', stock: 1.2, unit: 'L', min: 1.0, cost: 85.00, critical: false },
-      { name: 'Pulpo Patagónico', cat: 'Congelados', stock: 4.0, unit: 'kg', min: 12, cost: 32.00, critical: true }
-    ];
+// ── INIT ──────────────────────────────────────────────────────────
+(function init() {
+  initDashboard();
+  renderInventory(INVENTORY);
+  renderRecipes();
+  renderSuppliers(SUPPLIERS);
+  renderCalendar();
+})();
+</script>
 
-    function renderInventory(items) {
-      const tbody = document.getElementById('inventory-tbody-filters');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      
-      if (items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">Sin coincidencias.</td></tr>`;
-        document.getElementById('results-count').textContent = '0 elementos';
-        return;
-      }
-      document.getElementById('results-count').textContent = `${items.length} elementos`;
-
-      items.forEach(item => {
-        const pct = Math.min(100, Math.round((item.stock / (item.min * 2)) * 100));
-        const status = item.critical 
-          ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-red-50 text-red-700 font-bold border border-red-100 text-xs">REORDER</span>`
-          : `<span class="inline-flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded font-semibold">Optimal</span>`;
-        
-        tbody.innerHTML += `
-          <tr class="hover:bg-slate-50/50">
-            <td class="p-4 pl-6 font-semibold text-slate-900">${item.name}</td>
-            <td class="p-4"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">${item.cat}</span></td>
-            <td class="p-4"><span class="${item.critical?'text-red-600 font-bold':'text-slate-900'}">${item.stock} ${item.unit}</span></td>
-            <td class="p-4 text-slate-500">${item.min} ${item.unit}</td>
-            <td class="p-4 font-semibold text-slate-900">$${item.cost.toFixed(2)}</td>
-            <td class="p-4 pr-6">${status}</td>
-          </tr>`;
-      });
-    }
-
-    function filterInventory() {
-      const search = document.getElementById('search-input').value.toLowerCase();
-      const cat = document.getElementById('category-filter').value;
-      const price = document.getElementById('price-filter').value;
-      const stock = document.getElementById('stock-filter').value;
-
-      const filtered = inventoryItems.filter(item => {
-        if (search && !item.name.toLowerCase().includes(search)) return false;
-        if (cat && item.cat !== cat) return false;
-        if (price) {
-          if (price === 'low' && item.cost >= 10.00) return false;
-          if (price === 'mid' && (item.cost < 10.00 || item.cost > 50.00)) return false;
-          if (price === 'high' && item.cost <= 50.00) return false;
-        }
-        if (stock) {
-          if (stock === 'critical' && !item.critical) return false;
-          if (stock === 'optimal' && item.critical) return false;
-        }
-        return true;
-      });
-      renderInventory(filtered);
-    }
-
-    renderInventory(inventoryItems);
-  </script>
 </body>
 </html>
