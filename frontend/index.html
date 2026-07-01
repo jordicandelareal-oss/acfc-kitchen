@@ -22,45 +22,20 @@
             "on-secondary": "#ffffff",
             "secondary-container": "#ecfdf5",
             "on-secondary-container": "#047857",
-            "tertiary": "#db2777", // Pink/Coral
-            "on-tertiary": "#ffffff",
+            "tertiary": "#db2777",
             "error": "#ef4444",
-            "on-error": "#ffffff",
-            "error-container": "#fef2f2",
-            "on-error-container": "#991b1b",
-            "background": "#f1f5f9", // Fondo gris ultra-claro limpio (Slate 100) para contraste
-            "on-background": "#0f172a", // Slate 900
-            "surface": "#ffffff", // Blanco puro para tarjetas
-            "surface-dim": "#f8fafc", // Slate 50 para headers/tables
-            "surface-bright": "#ffffff",
+            "background": "#f1f5f9", // Gris claro
+            "on-background": "#0f172a",
+            "surface": "#ffffff",
+            "surface-dim": "#f8fafc",
             "on-surface": "#0f172a",
-            "on-surface-variant": "#475569", // Slate 600
-            "outline": "#e2e8f0", // Slate 200
-            "outline-variant": "#cbd5e1" // Slate 300
+            "on-surface-variant": "#475569",
+            "outline": "#e2e8f0"
           },
           fontFamily: {
             "display": ["Outfit", "sans-serif"],
             "headline": ["Outfit", "sans-serif"],
-            "body": ["Inter", "sans-serif"],
-            "label": ["Inter", "sans-serif"]
-          },
-          fontSize: {
-            "display-lg": ["44px", { lineHeight: "52px", fontWeight: "700", letterSpacing: "-0.02em" }],
-            "headline-lg": ["30px", { lineHeight: "38px", fontWeight: "600" }],
-            "headline-lg-mobile": ["22px", { lineHeight: "30px", fontWeight: "600" }],
-            "headline-md": ["22px", { lineHeight: "28px", fontWeight: "500" }],
-            "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
-            "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
-            "label-md": ["14px", { lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "600" }],
-            "label-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }]
-          },
-          borderRadius: {
-            DEFAULT: "0.5rem",
-            sm: "0.25rem",
-            md: "0.75rem",
-            lg: "1rem",
-            xl: "1.5rem",
-            full: "9999px"
+            "body": ["Inter", "sans-serif"]
           }
         }
       }
@@ -68,15 +43,12 @@
   </script>
   <style>
     body { background-color: #f1f5f9; color: #0f172a; font-family: 'Inter', sans-serif; }
-
-    /* Tarjetas y Contenedores Premium */
     .premium-card {
       background-color: #ffffff;
       border: 1px solid rgba(226, 232, 240, 0.8);
       box-shadow: 0 4px 18px -4px rgba(15, 23, 42, 0.04), 0 2px 8px -2px rgba(15, 23, 42, 0.02);
       border-radius: 1rem;
     }
-    
     .glass-day {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -90,10 +62,14 @@
       border-top: 3px solid #4f46e5 !important;
       background: #f5f7ff !important;
     }
-    .recipe-gradient {
-      background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.3) 60%, transparent 100%);
+    .nav-link {
+      @apply text-slate-600 hover:text-indigo-600 hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors font-medium text-sm cursor-pointer flex items-center gap-2;
     }
-    .glow-error { box-shadow: 0 0 15px rgba(239, 68, 68, 0.08); }
+    .nav-link.active {
+      @apply text-indigo-700 bg-indigo-50/80 font-semibold;
+    }
+    .screen { display: none; }
+    .screen.active { display: flex; }
     .pulse-coral { animation: pulse-coral 2s infinite; }
     @keyframes pulse-coral {
       0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3); }
@@ -102,721 +78,451 @@
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    
-    /* Navigation Items */
-    .nav-item {
-      @apply flex items-center gap-4 text-slate-500 px-4 py-3 rounded-xl hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 font-medium text-sm;
-    }
-    .nav-item.active {
-      @apply bg-indigo-50/80 text-indigo-700 font-semibold border-l-4 border-indigo-600 rounded-r-xl rounded-l-none shadow-sm shadow-indigo-600/5;
-    }
-    .screen { display: none; }
-    .screen.active { display: flex; }
   </style>
 </head>
-<body class="min-h-screen flex overflow-hidden bg-slate-100/60 text-slate-900">
+<body class="min-h-screen flex flex-col bg-slate-100/60 text-slate-900">
 
-  <!-- ── Overlay / Backdrop for Mobile Drawer ────────────────────── -->
-  <div id="sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-40 hidden transition-opacity duration-200 opacity-0"></div>
-
-  <!-- ── Side Navigation ─────────────────────────────────────────── -->
-  <aside id="sidebar-container" class="fixed md:sticky top-0 left-0 h-screen bg-white border-r border-slate-200/80 shadow-sm w-64 z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col shrink-0">
-    <!-- Top Area: Brand & Logo -->
-    <div class="p-6 pb-5 flex flex-col items-center border-b border-slate-100 relative">
-      <button onclick="toggleMobileSidebar()" class="absolute right-4 top-4 md:hidden text-slate-400 hover:text-slate-600">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-      <div class="mb-4 flex items-center justify-center p-3 rounded-xl bg-slate-50 border border-slate-100">
-        <img src="logo.png" alt="ACFC Kitchen Logo" class="h-16 w-auto object-contain max-w-[180px]" onerror="this.outerHTML='<span class=\'material-symbols-outlined text-4xl text-indigo-600\'>restaurant</span>'"/>
-      </div>
-      <h1 class="font-headline-md text-xl font-bold text-slate-900 text-center" style="font-family: Outfit">ACFC Kitchen</h1>
-      <p class="text-xs text-slate-500 mt-1 text-center">Suite de Gestión Gastronómica</p>
-    </div>
-
-    <!-- Navigation links -->
-    <div class="flex-1 overflow-y-auto py-6 px-4 space-y-1.5 no-scrollbar">
-      <a onclick="showScreen('dashboard')" class="nav-item active cursor-pointer" id="nav-dashboard">
-        <span class="material-symbols-outlined text-slate-400">dashboard</span> Dashboard
-      </a>
-      <a onclick="showScreen('planner')" class="nav-item cursor-pointer" id="nav-planner">
-        <span class="material-symbols-outlined text-slate-400">calendar_month</span> Planificador Menú
-      </a>
-
-      <!-- Separador sutil -->
-      <div class="pt-4 pb-1 px-4">
-        <div class="border-t border-slate-100"></div>
-        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest pt-2 block">Operaciones</span>
-      </div>
-
-      <a onclick="showScreen('inventory')" class="nav-item cursor-pointer" id="nav-inventory">
-        <span class="material-symbols-outlined text-slate-400">inventory_2</span> Inventario y Control
-      </a>
-      <a onclick="showScreen('recetas')" class="nav-item cursor-pointer" id="nav-recetas">
-        <span class="material-symbols-outlined text-slate-400">receipt_long</span> Recetas & Escandallos
-      </a>
-      <a onclick="showScreen('proveedores')" class="nav-item cursor-pointer" id="nav-proveedores">
-        <span class="material-symbols-outlined text-slate-400">group</span> Proveedores
-      </a>
-
-      <!-- Separador sutil -->
-      <div class="pt-4 pb-1 px-4">
-        <div class="border-t border-slate-100"></div>
-        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest pt-2 block">Inteligencia</span>
-      </div>
-
-      <a onclick="showScreen('recipes')" class="nav-item cursor-pointer" id="nav-recipes">
-        <span class="material-symbols-outlined text-slate-400">auto_awesome</span> Asistente IA
-      </a>
-    </div>
-
-    <!-- Bottom Area -->
-    <div class="p-4 border-t border-slate-100 bg-slate-50/50">
-      <button class="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors mb-4 flex items-center justify-center gap-2 shadow-sm shadow-indigo-600/10">
-        <span class="material-symbols-outlined">add</span> Nuevo Registro
-      </button>
-      <a class="flex items-center gap-4 text-slate-500 px-4 py-2 rounded-lg hover:bg-slate-100/50 text-xs cursor-pointer">
-        <span class="material-symbols-outlined text-lg text-slate-400">help</span> Soporte Técnico
-      </a>
-      <a class="flex items-center gap-4 text-slate-500 px-4 py-2 rounded-lg hover:bg-slate-100/50 text-xs cursor-pointer">
-        <span class="material-symbols-outlined text-lg text-slate-400">logout</span> Cerrar Sesión
-      </a>
-    </div>
-  </aside>
-
-  <!-- ── Main area ───────────────────────────────────────────────── -->
-  <div class="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
-
-    <!-- Top App Bar -->
-    <header class="flex justify-between items-center w-full px-6 h-20 bg-white border-b border-slate-200 sticky top-0 z-40 shrink-0">
-      <div class="flex items-center gap-4">
-        <!-- Hamburguesa para móviles -->
-        <button onclick="toggleMobileSidebar()" class="p-2 -ml-2 rounded-lg text-slate-600 hover:bg-slate-50 md:hidden flex items-center justify-center">
+  <!-- ── NAVBAR SUPERIOR UNIFICADO ────────────────────────────────── -->
+  <header class="sticky top-0 z-50 w-full bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
+      
+      <!-- A la izquierda: Logo + Marca -->
+      <div class="flex items-center gap-3">
+        <!-- Hamburguesa móvil -->
+        <button onclick="toggleMobileMenu()" class="p-2 -ml-2 rounded-lg text-slate-600 hover:bg-slate-100 md:hidden flex items-center justify-center">
           <span class="material-symbols-outlined text-2xl">menu</span>
         </button>
-
-        <div class="flex items-center gap-3">
-          <img src="logo.png" alt="ACFC Logo" class="h-8 w-auto object-contain md:hidden" onerror="this.style.display='none'"/>
-          <span class="font-headline-lg-mobile text-lg font-bold text-indigo-600 md:hidden" style="font-family: Outfit">ACFC Kitchen</span>
+        <div class="p-1 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center">
+          <img src="logo.png" alt="ACFC Logo" class="h-10 w-auto object-contain" onerror="this.outerHTML='<span class=\'material-symbols-outlined text-indigo-600 text-3xl\'>restaurant</span>'"/>
         </div>
-        
-        <div class="hidden md:flex items-center gap-2 text-slate-500">
-          <span class="font-label-md text-sm">ACFC Kitchen</span>
-          <span class="material-symbols-outlined text-sm">chevron_right</span>
-          <span class="font-label-md text-sm text-indigo-600 font-semibold" id="breadcrumb">Dashboard</span>
-        </div>
-      </div>
-      <div class="flex items-center gap-6">
-        <div class="text-right hidden lg:block">
-          <div class="font-headline-md text-headline-md text-emerald-600 font-bold" style="font-family: Outfit">$24,500.00</div>
-          <div class="font-label-sm text-xs text-slate-500 uppercase tracking-wider">Costo Global Planificado</div>
-        </div>
-        <div class="flex items-center gap-4 border-l border-slate-200 pl-6">
-          <button class="text-slate-500 hover:text-indigo-600 transition-colors relative">
-            <span class="material-symbols-outlined">notifications</span>
-            <span class="absolute top-0 right-0 w-2 h-2 bg-red-600 rounded-full pulse-coral"></span>
-          </button>
-          <button class="text-slate-500 hover:text-indigo-600 transition-colors">
-            <span class="material-symbols-outlined">settings</span>
-          </button>
-          <div class="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 overflow-hidden cursor-pointer hover:border-indigo-600 transition-colors flex items-center justify-center">
-            <span class="material-symbols-outlined text-slate-600">person</span>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- Content Screens -->
-    <div class="flex-1 overflow-y-auto bg-slate-50/50 p-6 md:p-8 space-y-8">
-
-      <!-- ═══ SCREEN: DASHBOARD ══════════════════════════════════════ -->
-      <div id="screen-dashboard" class="screen active flex-col space-y-8">
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
-          <div>
-            <h2 class="font-display-lg text-3xl md:text-4xl text-slate-900 mb-2 font-bold" style="font-family: Outfit">Dashboard</h2>
-            <p class="font-body-lg text-slate-500">Resumen ejecutivo del estado del sistema gastronómico claro e intuitivo.</p>
-          </div>
-          <button onclick="showScreen('planner')" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 transition-all shadow-sm flex items-center gap-2">
-            <span class="material-symbols-outlined">calendar_month</span> Planificador de Menú
-          </button>
-        </div>
-
-        <!-- Bento stats -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="premium-card p-6 relative overflow-hidden group cursor-pointer hover:shadow-md transition-shadow" onclick="showScreen('inventory')">
-            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><span class="material-symbols-outlined text-6xl text-indigo-600">kitchen</span></div>
-            <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Total Ingredientes</div>
-            <div class="font-display-lg text-slate-900 flex items-baseline gap-2" style="font-size:36px;font-family:Outfit">482 <span class="text-xs font-semibold text-emerald-600">+12 esta semana</span></div>
-          </div>
-          <div class="premium-card p-6 relative overflow-hidden group border-l-4 border-l-red-500 cursor-pointer hover:shadow-md transition-shadow" onclick="showScreen('inventory')">
-            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><span class="material-symbols-outlined text-6xl text-red-500">warning</span></div>
-            <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2 flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-red-500 pulse-coral"></span>Stock Crítico
-            </div>
-            <div class="flex items-baseline gap-2 font-bold text-red-600" style="font-size:36px;font-family:Outfit">12 <span class="text-xs text-slate-400 font-medium ml-2">requieren reorden</span></div>
-          </div>
-          <div class="premium-card p-6 relative overflow-hidden group cursor-pointer hover:shadow-md transition-shadow">
-            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><span class="material-symbols-outlined text-6xl text-indigo-400">receipt_long</span></div>
-            <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Pedidos de Compra</div>
-            <div class="flex items-baseline gap-2 font-bold text-indigo-600" style="font-size:36px;font-family:Outfit">8 <span class="text-xs text-slate-400 font-medium ml-2">pendientes</span></div>
-          </div>
-          <div class="premium-card p-6 flex flex-col justify-between hover:shadow-md transition-shadow">
-            <div>
-              <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Presupuesto Ejecutado</div>
-              <div class="text-2xl font-bold text-slate-900" style="font-family:Outfit">$18,420.00</div>
-            </div>
-            <div class="mt-4">
-              <div class="flex justify-between text-xs text-slate-500 mb-1"><span>75%</span><span>Límite: $24,500</span></div>
-              <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div class="h-full bg-emerald-500 w-[75%] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.3)]"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick access matrix -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="premium-card p-6 cursor-pointer hover:border-indigo-300 hover:shadow-md transition-all" onclick="showScreen('recetas')">
-            <div class="flex items-center gap-4 mb-4">
-              <div class="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center"><span class="material-symbols-outlined text-indigo-600 text-2xl">receipt_long</span></div>
-              <div><div class="text-lg font-bold text-slate-900" style="font-family:Outfit">Recetas</div><div class="text-xs text-slate-500">Cálculo de Escandallos</div></div>
-            </div>
-            <p class="text-sm text-slate-500">Consulta los escandallos actualizados, costos de porción y márgenes brutos.</p>
-          </div>
-          <div class="premium-card p-6 cursor-pointer hover:border-indigo-300 hover:shadow-md transition-all" onclick="showScreen('proveedores')">
-            <div class="flex items-center gap-4 mb-4">
-              <div class="w-12 h-12 rounded-lg bg-emerald-50 flex items-center justify-center"><span class="material-symbols-outlined text-emerald-600 text-2xl">group</span></div>
-              <div><div class="text-lg font-bold text-slate-900" style="font-family:Outfit">Proveedores</div><div class="text-xs text-slate-500">Directorio y Tarifas</div></div>
-            </div>
-            <p class="text-sm text-slate-500">Catálogo de proveedores homologados y optimización por costo unitario mínimo.</p>
-          </div>
-          <div class="premium-card p-6 cursor-pointer hover:border-indigo-300 hover:shadow-md transition-all" onclick="showScreen('inventory')">
-            <div class="flex items-center gap-4 mb-4">
-              <div class="w-12 h-12 rounded-lg bg-amber-50 flex items-center justify-center"><span class="material-symbols-outlined text-amber-600 text-2xl">inventory_2</span></div>
-              <div><div class="text-lg font-bold text-slate-900" style="font-family:Outfit">Inventario</div><div class="text-xs text-slate-500">Buscador y Alertas</div></div>
-            </div>
-            <p class="text-sm text-slate-500">Monitoreo de ingredientes en stock y asistente automático de reposición.</p>
-          </div>
-          <div class="premium-card p-6 cursor-pointer hover:border-indigo-300 hover:shadow-md transition-all" onclick="showScreen('recipes')">
-            <div class="flex items-center gap-4 mb-4">
-              <div class="w-12 h-12 rounded-lg bg-pink-50 flex items-center justify-center"><span class="material-symbols-outlined text-pink-600 text-2xl">auto_awesome</span></div>
-              <div><div class="text-lg font-bold text-slate-900" style="font-family:Outfit">Asistente IA</div><div class="text-xs text-slate-500">Procesamiento NLP</div></div>
-            </div>
-            <p class="text-sm text-slate-500">Extrae ingredientes de recetas de forma textual y genera el escandallo automáticamente.</p>
-          </div>
-        </div>
+        <span class="font-headline text-lg font-bold text-slate-900" style="font-family: Outfit">ACFC Kitchen</span>
       </div>
 
-      <!-- ═══ SCREEN: PLANNER ════════════════════════════════════════ -->
-      <div id="screen-planner" class="screen flex-col lg:flex-row gap-6 overflow-hidden" style="height: calc(100vh - 160px)">
-        <!-- Calendar -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-            <div class="flex items-center gap-4">
-              <button class="p-1 text-slate-400 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined">chevron_left</span></button>
-              <h2 class="font-headline-lg text-2xl md:text-3xl font-semibold text-slate-900" style="font-family:Outfit">Julio 2026</h2>
-              <button class="p-1 text-slate-400 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined">chevron_right</span></button>
-            </div>
-            <div class="flex gap-4 items-center flex-wrap">
-              <span class="flex items-center gap-1 text-xs text-emerald-600 font-semibold"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Completo</span>
-              <span class="flex items-center gap-1 text-xs text-amber-500 font-semibold"><span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>Borrador</span>
-              <button class="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm">
-                Publicar Menú
-              </button>
-            </div>
-          </div>
-          <!-- Day headers -->
-          <div class="grid grid-cols-7 gap-2 mb-2">
-            <div class="text-center text-[11px] md:text-xs font-semibold text-slate-400 uppercase py-2">Lun</div>
-            <div class="text-center text-[11px] md:text-xs font-semibold text-slate-400 uppercase py-2">Mar</div>
-            <div class="text-center text-[11px] md:text-xs font-semibold text-slate-400 uppercase py-2">Mié</div>
-            <div class="text-center text-[11px] md:text-xs font-semibold text-slate-400 uppercase py-2">Jue</div>
-            <div class="text-center text-[11px] md:text-xs font-semibold text-slate-400 uppercase py-2">Vie</div>
-            <div class="text-center text-[11px] md:text-xs font-semibold text-slate-400 uppercase py-2">Sáb</div>
-            <div class="text-center text-[11px] md:text-xs font-semibold text-slate-400 uppercase py-2">Dom</div>
-          </div>
-          <!-- Calendar grid -->
-          <div class="grid grid-cols-7 gap-2 flex-1 overflow-y-auto no-scrollbar" id="cal-grid">
-            <!-- Days rendered by JS -->
-          </div>
-        </div>
-        <!-- Recipe Sidebar -->
-        <div class="w-full lg:w-80 bg-white border border-slate-200 rounded-xl flex flex-col overflow-hidden" style="max-height: calc(100vh - 200px)">
-          <div class="p-4 border-b border-slate-100 flex justify-between items-center">
-            <h3 class="font-headline-md text-headline-md font-semibold flex items-center gap-2 text-slate-900" style="font-family:Outfit">
-              <span class="material-symbols-outlined text-indigo-600">menu_book</span> Catálogo
-            </h3>
-            <button class="text-slate-400 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined">search</span></button>
-          </div>
-          <div class="flex gap-2 p-3 overflow-x-auto no-scrollbar border-b border-slate-100">
-            <span class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 font-semibold text-xs border border-indigo-100 cursor-pointer">Pasta</span>
-            <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs cursor-pointer hover:bg-slate-200 transition-colors">Carnes</span>
-            <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs cursor-pointer hover:bg-slate-200 transition-colors">Vegetariano</span>
-          </div>
-          <div class="flex-1 overflow-y-auto p-3 flex flex-col gap-3 no-scrollbar">
-            <!-- Recipe Cards -->
-            <div class="relative h-32 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing border border-slate-200 group">
-              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB7eL_t0ahUeqYD5rkMCez_5SHkvVskzu7orsSRVl3z9MF1ZaW_LzvdHHeTqARasIly4qWGrXqanZ5140hQJ_vySWNXOF9JYmDNTfCThJcXIQceZKqHeumQOU7FYEpyIttTsBW3MH4mf2heA-_5tC1_tsZ6A56TVUfa0Yfv982pqUzuNIU3w5fmHTH71KePdhxzut7GkcsYRWwByhwk4gpLugkFb0V0n1UzesIumVoLdiB8R-VNznfx_8sMikJqE11-Hka5NEpSh4oz')"></div>
-              <div class="absolute inset-0 recipe-gradient flex flex-col justify-between p-3">
-                <div class="flex justify-between items-start">
-                  <span class="bg-emerald-500/80 text-white font-bold text-[10px] px-2 py-0.5 rounded uppercase tracking-wider backdrop-blur-sm">Vegetariano</span>
-                  <span class="bg-black/60 text-white text-[11px] px-2 py-1 rounded backdrop-blur-md">$3.50/r</span>
-                </div>
-                <h4 class="text-body-lg font-bold text-white drop-shadow-md">Mushroom Risotto</h4>
-              </div>
-            </div>
-            <div class="relative h-32 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing border border-slate-200 group">
-              <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCZEcGKPWxVNwMDlgv67YH9Opp2KAKJTqC9hF72isI7Ib72EW-koGbWjPAS3MDWLeeGxojDtf6RA0Ou_ZEm_saM2mwkHqcXSYxWgHOVBMXssCT9i7kt7hQk2O6E-nlkSbaiqPpn4wtc9ZnU3kNZ1gG25OJ_vdt_cj9jBt6p_RFz4HpVeti7RaLlJBx_dEvXeUtdAIiXom6jpVn6Z0MnvyyeFJX008dQBiZuqnpgeU6UqX3glNY1hITSRSEr4ElE8PJLOMb3lmjIwZpw')"></div>
-              <div class="absolute inset-0 recipe-gradient flex flex-col justify-between p-3">
-                <div class="flex justify-between items-start">
-                  <span class="bg-rose-500/80 text-white font-bold text-[10px] px-2 py-0.5 rounded uppercase tracking-wider backdrop-blur-sm">Carne/Pescado</span>
-                  <span class="bg-black/60 text-white text-[11px] px-2 py-1 rounded backdrop-blur-md">$8.20/r</span>
-                </div>
-                <h4 class="text-body-lg font-bold text-white drop-shadow-md">Grilled Salmon</h4>
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- En el centro (Navegación Desktop) -->
+      <nav class="hidden md:flex items-center gap-1">
+        <a onclick="showScreen('dashboard')" class="nav-link active" id="nav-dashboard">
+          <span class="material-symbols-outlined text-lg">dashboard</span> Dashboard
+        </a>
+        <a onclick="showScreen('planner')" class="nav-link" id="nav-planner">
+          <span class="material-symbols-outlined text-lg">calendar_month</span> Planificador
+        </a>
+        <a onclick="showScreen('inventory')" class="nav-link" id="nav-inventory">
+          <span class="material-symbols-outlined text-lg">inventory_2</span> Inventario
+        </a>
+        <a onclick="showScreen('recetas')" class="nav-link" id="nav-recetas">
+          <span class="material-symbols-outlined text-lg">receipt_long</span> Recetas & Escandallos
+        </a>
+        <a onclick="showScreen('proveedores')" class="nav-link" id="nav-proveedores">
+          <span class="material-symbols-outlined text-lg">group</span> Proveedores
+        </a>
+        <a onclick="showScreen('recipes')" class="nav-link" id="nav-recipes">
+          <span class="material-symbols-outlined text-lg">auto_awesome</span> Asistente IA
+        </a>
+      </nav>
+
+      <!-- A la derecha: Acciones Rápidas -->
+      <div class="flex items-center gap-3">
+        <!-- Nuevo Registro -->
+        <button onclick="openModal()" class="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm shadow-sm shadow-indigo-600/10 flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">add</span> Nuevo Registro
+        </button>
+
+        <!-- Soporte -->
+        <a class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-colors flex items-center justify-center" title="Soporte Técnico">
+          <span class="material-symbols-outlined">help</span>
+        </a>
       </div>
 
-      <!-- ═══ SCREEN: INVENTORY (CON BUSCADOR Y FILTROS) ════════════ -->
-      <div id="screen-inventory" class="screen flex-col space-y-6">
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
-          <div>
-            <h2 class="font-display-lg text-3xl md:text-4xl text-slate-900 mb-2 font-bold" style="font-family:Outfit">Control de Inventario</h2>
-            <p class="font-body-lg text-slate-500">Métricas, niveles de reorden y asistente de stock mínimo.</p>
-          </div>
-          <button class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-sm">
-            <span class="material-symbols-outlined">sync</span>
-            Auto-generar Compras
-          </button>
-        </div>
+    </div>
 
-        <!-- Panel de Búsqueda y Filtros Avanzados -->
-        <div class="premium-card p-6 space-y-4">
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            <!-- Texto -->
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-3 top-3.5 text-slate-400">search</span>
-              <input type="text" id="search-input" onkeyup="filterInventory()" placeholder="Buscar ingrediente..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-3 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-400"/>
-            </div>
-            <!-- Categoría -->
-            <div>
-              <select id="category-filter" onchange="filterInventory()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-slate-700">
-                <option value="">Todas las Categorías</option>
-                <option value="Frescos">Frescos</option>
-                <option value="Asiático">Asiático</option>
-                <option value="Despensa">Despensa</option>
-                <option value="Congelados">Congelados</option>
-                <option value="Lácteos">Lácteos</option>
-              </select>
-            </div>
-            <!-- Rango de Precio -->
-            <div>
-              <select id="price-filter" onchange="filterInventory()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-slate-700">
-                <option value="">Cualquier Precio</option>
-                <option value="low">Menos de $10.00 / kg o L</option>
-                <option value="mid">Entre $10.00 y $50.00</option>
-                <option value="high">Más de $50.00</option>
-              </select>
-            </div>
-            <!-- Nivel de Stock -->
-            <div>
-              <select id="stock-filter" onchange="filterInventory()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-slate-700">
-                <option value="">Cualquier Stock</option>
-                <option value="critical">Bajo Stock / Crítico</option>
-                <option value="optimal">Disponible / Óptimo</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tabla de Inventario -->
-        <div class="premium-card overflow-hidden">
-          <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
-            <h3 class="font-headline-md text-headline-md text-slate-900 font-bold" style="font-family:Outfit">Live Stock Matrix</h3>
-            <span class="text-xs text-slate-500 font-medium" id="results-count">Mostrando todos los ingredientes</span>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="bg-slate-50/75 border-b border-slate-200/80">
-                  <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider pl-6">Ingrediente</th>
-                  <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Categoría</th>
-                  <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Stock Actual</th>
-                  <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Stock Mínimo</th>
-                  <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Costo Unitario</th>
-                  <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider pr-6">Estado</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100 text-sm text-slate-700 bg-white" id="inventory-tbody-filters">
-                <!-- Se inyecta por JS para permitir filtrado interactivo inmediato -->
-              </tbody>
-            </table>
-          </div>
-        </div>
+    <!-- Menú Desplegable Móvil -->
+    <div id="mobile-menu" class="hidden border-t border-slate-100 bg-white md:hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1">
+        <a onclick="showScreen('dashboard')" class="nav-link w-full py-3" id="mobile-nav-dashboard">
+          <span class="material-symbols-outlined">dashboard</span> Dashboard
+        </a>
+        <a onclick="showScreen('planner')" class="nav-link w-full py-3" id="mobile-nav-planner">
+          <span class="material-symbols-outlined">calendar_month</span> Planificador
+        </a>
+        <a onclick="showScreen('inventory')" class="nav-link w-full py-3" id="mobile-nav-inventory">
+          <span class="material-symbols-outlined">inventory_2</span> Inventario
+        </a>
+        <a onclick="showScreen('recetas')" class="nav-link w-full py-3" id="mobile-nav-recetas">
+          <span class="material-symbols-outlined">receipt_long</span> Recetas & Escandallos
+        </a>
+        <a onclick="showScreen('proveedores')" class="nav-link w-full py-3" id="mobile-nav-proveedores">
+          <span class="material-symbols-outlined">group</span> Proveedores
+        </a>
+        <a onclick="showScreen('recipes')" class="nav-link w-full py-3" id="mobile-nav-recipes">
+          <span class="material-symbols-outlined">auto_awesome</span> Asistente IA
+        </a>
       </div>
+    </div>
+  </header>
 
-      <!-- ═══ SCREEN: RECETAS Y ESCANDALLOS ════════════════════════ -->
-      <div id="screen-recetas" class="screen flex-col space-y-6">
+  <!-- ── MODAL: NUEVO REGISTRO ────────────────────────────────────── -->
+  <div id="new-register-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white border border-slate-200 shadow-xl rounded-xl max-w-md w-full p-6 space-y-4 transform scale-95 transition-transform duration-300">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg font-bold text-slate-950" style="font-family: Outfit">Crear nuevo elemento</h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <p class="text-sm text-slate-500">Selecciona el tipo de recurso que deseas agregar a la base de datos de ACFC Kitchen:</p>
+      <div class="grid grid-cols-3 gap-3">
+        <button onclick="alert('Funcionalidad de Inventario en desarrollo'); closeModal();" class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-center hover:border-indigo-500 hover:bg-indigo-50/20 transition-all">
+          <span class="material-symbols-outlined text-2xl text-indigo-600 mb-1 block">inventory_2</span>
+          <span class="text-xs font-semibold text-slate-700">Inventario</span>
+        </button>
+        <button onclick="alert('Funcionalidad de Receta en desarrollo'); closeModal();" class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-center hover:border-indigo-500 hover:bg-indigo-50/20 transition-all">
+          <span class="material-symbols-outlined text-2xl text-indigo-600 mb-1 block">receipt_long</span>
+          <span class="text-xs font-semibold text-slate-700">Receta</span>
+        </button>
+        <button onclick="alert('Funcionalidad de Proveedor en desarrollo'); closeModal();" class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-center hover:border-indigo-500 hover:bg-indigo-50/20 transition-all">
+          <span class="material-symbols-outlined text-2xl text-indigo-600 mb-1 block">group</span>
+          <span class="text-xs font-semibold text-slate-700">Proveedor</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CONTENT CONTAINER ────────────────────────────────────────── -->
+  <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8 overflow-y-auto">
+
+    <!-- ═══ SCREEN: DASHBOARD ══════════════════════════════════════ -->
+    <div id="screen-dashboard" class="screen active flex-col space-y-8">
+      <div class="flex justify-between items-end">
         <div>
-          <h2 class="font-display-lg text-3xl md:text-4xl text-slate-900 mb-2 font-bold" style="font-family:Outfit">Recetas y Escandallos</h2>
-          <p class="font-body-lg text-slate-500">Cálculo de costes de plato, márgenes de ganancia y fichas técnicas.</p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- Listado de fichas -->
-          <div class="lg:col-span-2 space-y-4">
-            <div class="premium-card p-6 space-y-4">
-              <div class="flex justify-between items-center">
-                <h3 class="text-lg font-bold text-slate-900" style="font-family:Outfit">Catálogo de Fichas de Costo</h3>
-                <button class="bg-indigo-50 text-indigo-700 border border-indigo-100 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-indigo-100 transition-colors">+ Añadir Ficha</button>
-              </div>
-              <div class="divide-y divide-slate-100">
-                <div class="py-4 flex justify-between items-center">
-                  <div>
-                    <div class="font-semibold text-slate-950">Mushroom Risotto</div>
-                    <div class="text-xs text-slate-500">Pasta/Arroz • 10 raciones estándar</div>
-                  </div>
-                  <div class="text-right">
-                    <div class="font-bold text-slate-900">$3.33 / ración</div>
-                    <div class="text-xs text-emerald-600 font-semibold">Margen: 70%</div>
-                  </div>
-                </div>
-                <div class="py-4 flex justify-between items-center">
-                  <div>
-                    <div class="font-semibold text-slate-950">Grilled Salmon with Asparagus</div>
-                    <div class="text-xs text-slate-500">Pescados • 5 raciones estándar</div>
-                  </div>
-                  <div class="text-right">
-                    <div class="font-bold text-slate-900">$8.20 / ración</div>
-                    <div class="text-xs text-emerald-600 font-semibold">Margen: 65%</div>
-                  </div>
-                </div>
-                <div class="py-4 flex justify-between items-center">
-                  <div>
-                    <div class="font-semibold text-slate-950">Penne all'Arrabbiata</div>
-                    <div class="text-xs text-slate-500">Pasta • 20 raciones estándar</div>
-                  </div>
-                  <div class="text-right">
-                    <div class="font-bold text-slate-900">$2.10 / ración</div>
-                    <div class="text-xs text-emerald-600 font-semibold">Margen: 80%</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Resumen de Costes e Indicadores -->
-          <div class="space-y-6">
-            <div class="premium-card p-6 space-y-4">
-              <h3 class="text-lg font-bold text-slate-900" style="font-family:Outfit">Distribución de Costo Medio</h3>
-              <div class="space-y-3">
-                <div>
-                  <div class="flex justify-between text-xs text-slate-500 mb-1"><span>Materia Prima</span><span>40%</span></div>
-                  <div class="h-2 w-full bg-slate-100 rounded-full"><div class="h-full bg-indigo-600 w-[40%] rounded-full"></div></div>
-                </div>
-                <div>
-                  <div class="flex justify-between text-xs text-slate-500 mb-1"><span>Merma Proyectada</span><span>8%</span></div>
-                  <div class="h-2 w-full bg-slate-100 rounded-full"><div class="h-full bg-amber-500 w-[8%] rounded-full"></div></div>
-                </div>
-                <div>
-                  <div class="flex justify-between text-xs text-slate-500 mb-1"><span>Margen Bruto Promedio</span><span>52%</span></div>
-                  <div class="h-2 w-full bg-slate-100 rounded-full"><div class="h-full bg-emerald-500 w-[52%] rounded-full"></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <h2 class="text-2xl md:text-3xl font-bold text-slate-900" style="font-family: Outfit">Dashboard</h2>
+          <p class="text-sm text-slate-500">Resumen ejecutivo del estado del sistema gastronómico claro e intuitivo.</p>
         </div>
       </div>
 
-      <!-- ═══ SCREEN: PROVEEDORES ═══════════════════════════════════ -->
-      <div id="screen-proveedores" class="screen flex-col space-y-6">
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+      <!-- Bento stats -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="premium-card p-6 relative overflow-hidden group cursor-pointer hover:shadow-md transition-shadow" onclick="showScreen('inventory')">
+          <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><span class="material-symbols-outlined text-6xl text-indigo-600">kitchen</span></div>
+          <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Total Ingredientes</div>
+          <div class="font-display-lg text-slate-900 flex items-baseline gap-2" style="font-size:32px;font-family:Outfit">482 <span class="text-xs font-semibold text-emerald-600">+12 esta semana</span></div>
+        </div>
+        <div class="premium-card p-6 relative overflow-hidden group border-l-4 border-l-red-500 cursor-pointer hover:shadow-md transition-shadow" onclick="showScreen('inventory')">
+          <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><span class="material-symbols-outlined text-6xl text-red-500">warning</span></div>
+          <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-500 pulse-coral"></span>Stock Crítico
+          </div>
+          <div class="flex items-baseline gap-2 font-bold text-red-600" style="font-size:32px;font-family:Outfit">12 <span class="text-xs text-slate-400 font-medium ml-2">requieren reorden</span></div>
+        </div>
+        <div class="premium-card p-6 relative overflow-hidden group cursor-pointer hover:shadow-md transition-shadow">
+          <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><span class="material-symbols-outlined text-6xl text-indigo-400">receipt_long</span></div>
+          <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Pedidos de Compra</div>
+          <div class="flex items-baseline gap-2 font-bold text-indigo-600" style="font-size:32px;font-family:Outfit">8 <span class="text-xs text-slate-400 font-medium ml-2">pendientes</span></div>
+        </div>
+        <div class="premium-card p-6 flex flex-col justify-between hover:shadow-md transition-shadow">
           <div>
-            <h2 class="font-display-lg text-3xl md:text-4xl text-slate-900 mb-2 font-bold" style="font-family:Outfit">Directorio de Proveedores</h2>
-            <p class="font-body-lg text-slate-500">Listado de partners comerciales, tiempos de entrega y condiciones.</p>
+            <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Presupuesto Ejecutado</div>
+            <div class="text-xl font-bold text-slate-900" style="font-family:Outfit">$18,420.00</div>
           </div>
-          <button class="bg-indigo-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-indigo-700 transition-all text-sm">+ Añadir Proveedor</button>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Proveedor 1 -->
-          <div class="premium-card p-6 flex flex-col justify-between">
-            <div class="space-y-3">
-              <div class="flex justify-between items-start">
-                <span class="px-2.5 py-0.5 bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase rounded border border-indigo-100">Frescos y Carnes</span>
-                <span class="text-xs text-emerald-600 font-semibold flex items-center"><span class="w-2 h-2 bg-emerald-500 rounded-full mr-1.5"></span>Activo</span>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900" style="font-family:Outfit">Mercabarna Dist. S.L.</h3>
-              <p class="text-sm text-slate-500">Principal proveedor de carnes de alta gama (Wagyu, ternera gallega) y verduras selectas.</p>
-              <div class="text-xs text-slate-500 space-y-1 pt-2">
-                <div><strong>Contacto:</strong> pedidos@mercabarnadist.com</div>
-                <div><strong>Teléfono:</strong> +34 932 443 112</div>
-                <div><strong>Condiciones:</strong> Pago a 30 días, entrega diaria</div>
-              </div>
-            </div>
-            <div class="pt-4 border-t border-slate-100 mt-4 flex justify-between items-center text-xs">
-              <span class="text-slate-400">Min. Pedido: $150</span>
-              <span class="text-indigo-600 font-semibold cursor-pointer">Ver Precios de Compra →</span>
-            </div>
-          </div>
-          <!-- Proveedor 2 -->
-          <div class="premium-card p-6 flex flex-col justify-between">
-            <div class="space-y-3">
-              <div class="flex justify-between items-start">
-                <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 text-[10px] font-bold uppercase rounded border border-amber-100">Secos e Importación</span>
-                <span class="text-xs text-emerald-600 font-semibold flex items-center"><span class="w-2 h-2 bg-emerald-500 rounded-full mr-1.5"></span>Activo</span>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900" style="font-family:Outfit">Tokyo Foods España</h3>
-              <p class="text-sm text-slate-500">Insumos asiáticos gourmet, arroz Koshihikari, salsas de soja envejecidas y conservas.</p>
-              <div class="text-xs text-slate-500 space-y-1 pt-2">
-                <div><strong>Contacto:</strong> sales@tokyofoods.es</div>
-                <div><strong>Teléfono:</strong> +34 911 556 788</div>
-                <div><strong>Condiciones:</strong> Pago inmediato, entrega semanal (Martes)</div>
-              </div>
-            </div>
-            <div class="pt-4 border-t border-slate-100 mt-4 flex justify-between items-center text-xs">
-              <span class="text-slate-400">Min. Pedido: $300</span>
-              <span class="text-indigo-600 font-semibold cursor-pointer">Ver Precios de Compra →</span>
-            </div>
-          </div>
-          <!-- Proveedor 3 -->
-          <div class="premium-card p-6 flex flex-col justify-between">
-            <div class="space-y-3">
-              <div class="flex justify-between items-start">
-                <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase rounded border border-emerald-100">Gourmet Select</span>
-                <span class="text-xs text-amber-600 font-semibold flex items-center"><span class="w-2 h-2 bg-amber-500 rounded-full mr-1.5"></span>En Revisión</span>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900" style="font-family:Outfit">Ibéricos & Trufas Madrid</h3>
-              <p class="text-sm text-slate-500">Aceites premium de trufa negra, jamón de bellota curado y trufa fresca de temporada.</p>
-              <div class="text-xs text-slate-500 space-y-1 pt-2">
-                <div><strong>Contacto:</strong> contacto@ibericostrufas.com</div>
-                <div><strong>Teléfono:</strong> +34 915 229 001</div>
-                <div><strong>Condiciones:</strong> Pago a 15 días, entrega 48h</div>
-              </div>
-            </div>
-            <div class="pt-4 border-t border-slate-100 mt-4 flex justify-between items-center text-xs">
-              <span class="text-slate-400">Min. Pedido: No</span>
-              <span class="text-indigo-600 font-semibold cursor-pointer">Ver Precios de Compra →</span>
+          <div class="mt-4">
+            <div class="flex justify-between text-xs text-slate-500 mb-1"><span>75%</span><span>Límite: $24,500</span></div>
+            <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div class="h-full bg-emerald-500 w-[75%] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.3)]"></div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- ═══ SCREEN: AI ASSISTANT (ASISTENTE IA) ═══════════════════ -->
-      <div id="screen-recipes" class="screen flex-col space-y-8">
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+    <!-- ═══ SCREEN: PLANNER ════════════════════════════════════════ -->
+    <div id="screen-planner" class="screen flex-col gap-6">
+      <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-bold text-slate-900" style="font-family:Outfit">Planificador Mensual</h2>
+      </div>
+      <div class="grid grid-cols-7 gap-2 mb-2">
+        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Lun</div>
+        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Mar</div>
+        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Mié</div>
+        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Jue</div>
+        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Vie</div>
+        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Sáb</div>
+        <div class="text-center text-xs font-semibold text-slate-400 uppercase py-2">Dom</div>
+      </div>
+      <div class="grid grid-cols-7 gap-2" id="cal-grid">
+        <!-- Days rendered by JS -->
+      </div>
+    </div>
+
+    <!-- ═══ SCREEN: INVENTORY (CON BUSCADOR Y FILTROS) ════════════ -->
+    <div id="screen-inventory" class="screen flex-col space-y-6">
+      <div class="flex justify-between items-end">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900" style="font-family:Outfit">Control de Inventario</h2>
+        </div>
+      </div>
+
+      <div class="premium-card p-6 space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-3.5 text-slate-400">search</span>
+            <input type="text" id="search-input" onkeyup="filterInventory()" placeholder="Buscar ingrediente..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-3 text-sm outline-none placeholder:text-slate-400"/>
+          </div>
           <div>
-            <h2 class="font-display-lg text-3xl md:text-4xl text-slate-900 mb-2 font-bold" style="font-family:Outfit">Asistente IA</h2>
-            <p class="font-body-lg text-slate-500">Extrae ingredientes de recetas de forma textual y genera el escandallo automáticamente.</p>
+            <select id="category-filter" onchange="filterInventory()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm outline-none text-slate-700">
+              <option value="">Todas las Categorías</option>
+              <option value="Frescos">Frescos</option>
+              <option value="Asiático">Asiático</option>
+              <option value="Despensa">Despensa</option>
+              <option value="Congelados">Congelados</option>
+              <option value="Lácteos">Lácteos</option>
+            </select>
+          </div>
+          <div>
+            <select id="price-filter" onchange="filterInventory()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm outline-none text-slate-700">
+              <option value="">Cualquier Precio</option>
+              <option value="low">Menos de $10.00</option>
+              <option value="mid">Entre $10.00 y $50.00</option>
+              <option value="high">Más de $50.00</option>
+            </select>
+          </div>
+          <div>
+            <select id="stock-filter" onchange="filterInventory()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm outline-none text-slate-700">
+              <option value="">Cualquier Stock</option>
+              <option value="critical">Bajo Stock / Crítico</option>
+              <option value="optimal">Disponible / Óptimo</option>
+            </select>
           </div>
         </div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Input -->
+      </div>
+
+      <div class="premium-card overflow-hidden">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
+          <h3 class="font-headline-md text-headline-md text-slate-900 font-bold" style="font-family:Outfit">Live Stock Matrix</h3>
+          <span class="text-xs text-slate-500 font-medium" id="results-count">Mostrando todos los ingredientes</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50/75 border-b border-slate-200/80">
+                <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider pl-6">Ingrediente</th>
+                <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Categoría</th>
+                <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Stock Actual</th>
+                <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Stock Mínimo</th>
+                <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Costo Unitario</th>
+                <th class="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider pr-6">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm text-slate-700 bg-white" id="inventory-tbody-filters">
+              <!-- JS code renders list -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SCREEN: RECETAS Y ESCANDALLOS ════════════════════════ -->
+    <div id="screen-recetas" class="screen flex-col space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold text-slate-900" style="font-family:Outfit">Recetas y Escandallos</h2>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-4">
           <div class="premium-card p-6 space-y-4">
-            <h3 class="text-lg font-bold text-slate-900" style="font-family:Outfit">Entrada de Receta (NLP)</h3>
-            <div>
-              <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Nombre del Plato</label>
-              <input type="text" placeholder="Ej: Risotto de Setas con Trufa" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:border-indigo-500 focus:outline-none transition-all placeholder:text-slate-400"/>
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Cuerpo de la Receta</label>
-              <textarea rows="5" placeholder="Pega el texto aquí..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:border-indigo-500 focus:outline-none transition-all placeholder:text-slate-400 resize-none"></textarea>
-            </div>
-            <button class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 shadow-sm">
-              <span class="material-symbols-outlined">psychology</span> Procesar e Integrar
-            </button>
-          </div>
-          <!-- Output -->
-          <div class="premium-card p-6 space-y-4">
-            <h3 class="text-lg font-bold text-slate-900" style="font-family:Outfit">Extracción Resultante</h3>
-            <div class="space-y-3">
-              <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
-                <span class="text-sm font-medium">Champiñones Portobello</span>
-                <span class="text-xs font-semibold text-slate-500">250g / porción</span>
+            <h3 class="text-lg font-bold text-slate-900">Fichas de Costo</h3>
+            <div class="divide-y divide-slate-100">
+              <div class="py-4 flex justify-between items-center">
+                <div>
+                  <div class="font-semibold text-slate-950">Mushroom Risotto</div>
+                  <div class="text-xs text-slate-500 font-medium">Pasta/Arroz • 10 pax</div>
+                </div>
+                <div class="text-right">
+                  <div class="font-bold text-slate-900">$3.33 / ración</div>
+                  <div class="text-xs text-emerald-600 font-semibold">Margen: 70%</div>
+                </div>
               </div>
-              <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
-                <span class="text-sm font-medium">Arroz Arborio</span>
-                <span class="text-xs font-semibold text-slate-500">100g / porción</span>
-              </div>
-              <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
-                <span class="text-sm font-medium">Aceite de Trufa Negra</span>
-                <span class="text-xs font-semibold text-slate-500">5ml / porción</span>
+              <div class="py-4 flex justify-between items-center">
+                <div>
+                  <div class="font-semibold text-slate-950">Grilled Salmon</div>
+                  <div class="text-xs text-slate-500 font-medium">Pescados • 5 pax</div>
+                </div>
+                <div class="text-right">
+                  <div class="font-bold text-slate-900">$8.20 / ración</div>
+                  <div class="text-xs text-emerald-600 font-semibold">Margen: 65%</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-    </div><!-- /content -->
-  </div><!-- /main -->
+    <!-- ═══ SCREEN: PROVEEDORES ═══════════════════════════════════ -->
+    <div id="screen-proveedores" class="screen flex-col space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold text-slate-900" style="font-family:Outfit">Proveedores</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="premium-card p-6 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex justify-between items-start">
+              <span class="px-2.5 py-0.5 bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase rounded border border-indigo-100">Frescos</span>
+              <span class="text-xs text-emerald-600 font-semibold flex items-center"><span class="w-2 h-2 bg-emerald-500 rounded-full mr-1.5"></span>Activo</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Mercabarna Dist. S.L.</h3>
+            <p class="text-sm text-slate-500">Principal proveedor de carnes de alta gama (Wagyu, ternera gallega) y verduras selectas.</p>
+            <div class="text-xs text-slate-500 space-y-1 pt-2">
+              <div><strong>Contacto:</strong> pedidos@mercabarnadist.com</div>
+              <div><strong>Condiciones:</strong> Pago a 30 días, entrega diaria</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SCREEN: AI ASSISTANT ═══════════════════════════════════ -->
+    <div id="screen-recipes" class="screen flex-col space-y-8">
+      <div>
+        <h2 class="text-2xl font-bold text-slate-900" style="font-family:Outfit">Asistente IA</h2>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="premium-card p-6 space-y-4">
+          <h3 class="text-lg font-bold text-slate-900">Entrada NLP</h3>
+          <textarea rows="5" placeholder="Pega el texto aquí..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:border-indigo-500 outline-none transition-all resize-none"></textarea>
+          <button class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2">Procesar Receta</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
 
   <script>
-    // ── Navigation & Mobile Toggle ────────────────────────────────
-    const labels = { 
-      dashboard: 'Dashboard', 
-      planner: 'Planificador Menú', 
-      inventory: 'Inventario y Control', 
-      recetas: 'Recetas & Escandallos', 
-      proveedores: 'Proveedores', 
-      recipes: 'Asistente IA' 
-    };
+    // Navigation
+    const screens = ['dashboard', 'planner', 'inventory', 'recetas', 'proveedores', 'recipes'];
 
-    function toggleMobileSidebar() {
-      const container = document.getElementById('sidebar-container');
-      const overlay = document.getElementById('sidebar-overlay');
-      const isHidden = container.classList.contains('-translate-x-full');
-      
-      if (isHidden) {
-        container.classList.remove('-translate-x-full');
-        overlay.classList.remove('hidden');
-        setTimeout(() => {
-          overlay.classList.add('opacity-100');
-        }, 50);
-      } else {
-        container.classList.add('-translate-x-full');
-        overlay.classList.remove('opacity-100');
-        setTimeout(() => {
-          overlay.classList.add('hidden');
-        }, 200);
-      }
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
     }
 
     function showScreen(id) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      
-      const targetScreen = document.getElementById('screen-' + id);
-      const targetNav = document.getElementById('nav-' + id);
-      if (targetScreen) targetScreen.classList.add('active');
-      if (targetNav) targetNav.classList.add('active');
-      
-      document.getElementById('breadcrumb').textContent = labels[id] || id;
+      screens.forEach(s => {
+        const scr = document.getElementById('screen-' + s);
+        if (scr) scr.classList.remove('active');
+        const link = document.getElementById('nav-' + s);
+        if (link) link.classList.remove('active');
+        const mobLink = document.getElementById('mobile-nav-' + s);
+        if (mobLink) mobLink.classList.remove('active');
+      });
 
-      // Cerrar drawer en mobile si se pulsa una ruta
-      const container = document.getElementById('sidebar-container');
-      if (!container.classList.contains('-translate-x-full') && window.innerWidth < 768) {
-        toggleMobileSidebar();
-      }
+      const activeScr = document.getElementById('screen-' + id);
+      if (activeScr) activeScr.classList.add('active');
+      const activeLink = document.getElementById('nav-' + id);
+      if (activeLink) activeLink.classList.add('active');
+      const activeMobLink = document.getElementById('mobile-nav-' + id);
+      if (activeMobLink) activeMobLink.classList.add('active');
+
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileMenu) mobileMenu.classList.add('hidden');
     }
 
-    // ── Calendar grid ─────────────────────────────────────────────
+    // Modal
+    function openModal() {
+      const modal = document.getElementById('new-register-modal');
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modal.firstElementChild.classList.remove('scale-95');
+      }, 50);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('new-register-modal');
+      modal.classList.add('opacity-0');
+      modal.firstElementChild.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    // Render Calendar
     const menuData = {
       1:  { almuerzo: 'Mushroom Risotto',   cena: 'Grilled Salmon',  cost: '$$' },
-      5:  { almuerzo: 'Penne Arrabiata',    cena: 'Ensalada Verde',  cost: '$' },
-      8:  { almuerzo: 'Wagyu Don',          cena: 'Sopa de Lentejas',cost: '$$$' },
-      12: { almuerzo: 'Green Salad',        cena: 'Pasta Pesto',     cost: '$' },
-      15: { almuerzo: 'Arroz Koshihikari',  cena: 'Salmón a la Sal', cost: '$$' }
+      5:  { almuerzo: 'Penne Arrabiata',    cena: 'Ensalada Verde',  cost: '$' }
     };
-    const daysInMonth = 31;
     const grid = document.getElementById('cal-grid');
-    for (let d = 1; d <= daysInMonth; d++) {
-      const cell = document.createElement('div');
-      const isToday = d === 1;
-      cell.className = `glass-day rounded-xl p-3 flex flex-col min-h-[120px] ${isToday ? 'current-day' : ''} hover:border-indigo-300 hover:shadow-sm transition-all cursor-pointer`;
-      let inner = `<div class="text-right text-xs font-semibold ${isToday?'text-indigo-600 font-bold':''} mb-1">${d}</div>`;
-      if (menuData[d]) {
-        const { almuerzo, cena, cost } = menuData[d];
-        const costColor = cost === '$$$' ? 'text-rose-600 bg-rose-50' : cost === '$$' ? 'text-indigo-600 bg-indigo-50' : 'text-emerald-600 bg-emerald-50';
-        inner += `<div class="flex-1 flex flex-col gap-1 overflow-hidden">
-          <div class="bg-white/80 border border-slate-100 rounded p-1.5 flex justify-between items-start">
-            <div class="truncate min-w-0 pr-1">
-              <span class="text-[9px] text-slate-400 block leading-none mb-0.5">Almuerzo</span>
-              <span class="text-xs truncate block text-slate-800 font-medium">${almuerzo}</span>
-            </div>
-            <span class="${costColor} font-bold text-[9px] px-1 rounded flex-shrink-0">${cost}</span>
-          </div>
-        </div>`;
+    if (grid) {
+      for (let d = 1; d <= 31; d++) {
+        const cell = document.createElement('div');
+        const isToday = d === 1;
+        cell.className = `glass-day rounded-xl p-3 flex flex-col min-h-[120px] ${isToday ? 'current-day' : ''} cursor-pointer`;
+        let inner = `<div class="text-right text-xs font-semibold ${isToday?'text-indigo-600':''} mb-1">${d}</div>`;
+        if (menuData[d]) {
+          const { almuerzo, cena, cost } = menuData[d];
+          inner += `<div class="flex-grow flex flex-col justify-end"><span class="text-xs font-semibold text-slate-800 truncate">${almuerzo}</span></div>`;
+        }
+        cell.innerHTML = inner;
+        grid.appendChild(cell);
       }
-      cell.innerHTML = inner;
-      grid.appendChild(cell);
     }
 
-    // ── Inventory Data Matrix & Filters ───────────────────────────
+    // Inventory & Filtering
     const inventoryItems = [
-      { name: 'Wagyu Beef A5', cat: 'Frescos', stock: 2.5, unit: 'kg', min: 10, cost: 125.00, status: 'REORDER', critical: true },
-      { name: 'Arroz Koshihikari', cat: 'Asiático', stock: 45, unit: 'kg', min: 15, cost: 4.50, status: 'Optimal', critical: false },
-      { name: 'Aceite de Trufa Negra', cat: 'Despensa', stock: 1.2, unit: 'L', min: 1.0, cost: 85.00, status: 'Monitoring', critical: false },
-      { name: 'Pulpo Patagónico', cat: 'Congelados', stock: 4.0, unit: 'kg', min: 12, cost: 32.00, status: 'REORDER', critical: true },
-      { name: 'Parmesano DOP', cat: 'Lácteos', stock: 8.5, unit: 'kg', min: 5, cost: 28.00, status: 'Optimal', critical: false },
-      { name: 'Champiñones Portobello', cat: 'Frescos', stock: 3.0, unit: 'kg', min: 8, cost: 4.80, status: 'Monitoring', critical: false },
+      { name: 'Wagyu Beef A5', cat: 'Frescos', stock: 2.5, unit: 'kg', min: 10, cost: 125.00, critical: true },
+      { name: 'Arroz Koshihikari', cat: 'Asiático', stock: 45, unit: 'kg', min: 15, cost: 4.50, critical: false },
+      { name: 'Aceite de Trufa Negra', cat: 'Despensa', stock: 1.2, unit: 'L', min: 1.0, cost: 85.00, critical: false },
+      { name: 'Pulpo Patagónico', cat: 'Congelados', stock: 4.0, unit: 'kg', min: 12, cost: 32.00, critical: true }
     ];
 
     function renderInventory(items) {
       const tbody = document.getElementById('inventory-tbody-filters');
+      if (!tbody) return;
       tbody.innerHTML = '';
       
       if (items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">No se encontraron ingredientes con los filtros seleccionados.</td></tr>`;
-        document.getElementById('results-count').textContent = 'Mostrando 0 ingredientes';
+        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">Sin coincidencias.</td></tr>`;
+        document.getElementById('results-count').textContent = '0 elementos';
         return;
       }
+      document.getElementById('results-count').textContent = `${items.length} elementos`;
 
-      document.getElementById('results-count').textContent = `Mostrando ${items.length} ingrediente${items.length > 1 ? 's' : ''}`;
-
-      items.forEach((item) => {
+      items.forEach(item => {
         const pct = Math.min(100, Math.round((item.stock / (item.min * 2)) * 100));
-        const pctColor = item.critical ? 'bg-red-500' : pct < 50 ? 'bg-amber-500' : 'bg-emerald-500';
-        const stockColor = item.critical ? 'text-red-600 font-semibold' : pct < 50 ? 'text-amber-600' : 'text-slate-900';
+        const status = item.critical 
+          ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-red-50 text-red-700 font-bold border border-red-100 text-xs">REORDER</span>`
+          : `<span class="inline-flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded font-semibold">Optimal</span>`;
         
-        const statusBadge = item.critical
-          ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-red-50 text-red-700 font-bold border border-red-100 text-xs"><span class="material-symbols-outlined text-[14px]">warning</span>REORDER</span>`
-          : `<span class="inline-flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Optimal</span>`;
-
         tbody.innerHTML += `
-          <tr class="hover:bg-slate-50 transition-colors">
-            <td class="p-4 pl-6">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded bg-slate-100 border border-slate-200 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-slate-500 text-lg">kitchen</span>
-                </div>
-                <span class="font-semibold text-slate-900">${item.name}</span>
-              </div>
-            </td>
-            <td class="p-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">${item.cat}</span></td>
-            <td class="p-4">
-              <div class="flex items-center gap-3">
-                <span class="${stockColor}">${item.stock} ${item.unit}</span>
-                <div class="h-1.5 w-20 bg-slate-100 rounded-full overflow-hidden">
-                  <div class="h-full ${pctColor} rounded-full" style="width:${pct}%"></div>
-                </div>
-              </div>
-            </td>
+          <tr class="hover:bg-slate-50/50">
+            <td class="p-4 pl-6 font-semibold text-slate-900">${item.name}</td>
+            <td class="p-4"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">${item.cat}</span></td>
+            <td class="p-4"><span class="${item.critical?'text-red-600 font-bold':'text-slate-900'}">${item.stock} ${item.unit}</span></td>
             <td class="p-4 text-slate-500">${item.min} ${item.unit}</td>
-            <td class="p-4 text-slate-900 font-medium">$${item.cost.toFixed(2)}/${item.unit}</td>
-            <td class="p-4 pr-6">${statusBadge}</td>
+            <td class="p-4 font-semibold text-slate-900">$${item.cost.toFixed(2)}</td>
+            <td class="p-4 pr-6">${status}</td>
           </tr>`;
       });
     }
 
     function filterInventory() {
-      const searchVal = document.getElementById('search-input').value.toLowerCase();
-      const catVal = document.getElementById('category-filter').value;
-      const priceRange = document.getElementById('price-filter').value;
-      const stockVal = document.getElementById('stock-filter').value;
+      const search = document.getElementById('search-input').value.toLowerCase();
+      const cat = document.getElementById('category-filter').value;
+      const price = document.getElementById('price-filter').value;
+      const stock = document.getElementById('stock-filter').value;
 
       const filtered = inventoryItems.filter(item => {
-        // Texto
-        if (searchVal && !item.name.toLowerCase().includes(searchVal)) return false;
-        // Categoría
-        if (catVal && item.cat !== catVal) return false;
-        // Rango de precio
-        if (priceRange) {
-          if (priceRange === 'low' && item.cost >= 10.00) return false;
-          if (priceRange === 'mid' && (item.cost < 10.00 || item.cost > 50.00)) return false;
-          if (priceRange === 'high' && item.cost <= 50.00) return false;
+        if (search && !item.name.toLowerCase().includes(search)) return false;
+        if (cat && item.cat !== cat) return false;
+        if (price) {
+          if (price === 'low' && item.cost >= 10.00) return false;
+          if (price === 'mid' && (item.cost < 10.00 || item.cost > 50.00)) return false;
+          if (price === 'high' && item.cost <= 50.00) return false;
         }
-        // Nivel de stock
-        if (stockVal) {
-          if (stockVal === 'critical' && !item.critical) return false;
-          if (stockVal === 'optimal' && item.critical) return false;
+        if (stock) {
+          if (stock === 'critical' && !item.critical) return false;
+          if (stock === 'optimal' && item.critical) return false;
         }
         return true;
       });
-
       renderInventory(filtered);
     }
 
-    // Carga inicial
     renderInventory(inventoryItems);
   </script>
 </body>
